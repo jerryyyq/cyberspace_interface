@@ -113,14 +113,14 @@ class ContentNode extends React.Component {
 
         if(this.state.err_msg !== "") {
             return (
-                <Layout.Content>
+                <Layout.Content key="1">
                     <h1>节点管理</h1>
                     {this.state.err_msg}
                 </Layout.Content>
             );
         } else {
             return (
-                <Layout.Content>
+                <Layout.Content key="1">
                     <h1>节点管理</h1>
                     <Table dataSource={this.state.node_list} columns={columns} />
                 </Layout.Content>

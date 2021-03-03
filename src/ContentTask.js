@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Table } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import DataDetail from './DataDetail.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -32,6 +33,10 @@ class ContentTask extends React.Component {
         )
     }
 
+    showTaskInfo(event) {
+
+    }
+
     handleDeleteTask(event) {
 
     }
@@ -46,20 +51,20 @@ class ContentTask extends React.Component {
     render() {
         const columns = [
             {
-              title: '任务 ID',
-              dataIndex: 'task_id',
-              key: 'task_id',
-              render: text => <a>{text}</a>,
+                title: '任务 ID',
+                dataIndex: 'task_id',
+                key: 'task_id',
+                render: (text, record) => DataDetail(text, record),
             },
             {
-              title: '名称',
-              dataIndex: 'name',
-              key: 'name',
+                title: '名称',
+                dataIndex: 'name',
+                key: 'name',
             },
             {
-              title: '优先级',
-              dataIndex: 'priority',
-              key: 'priority',
+                title: '优先级',
+                dataIndex: 'priority',
+                key: 'priority',
             },
             {
                 title: '扫描类型',
@@ -99,14 +104,14 @@ class ContentTask extends React.Component {
 
         if(this.state.err_msg !== "") {
             return (
-                <Layout.Content>
+                <Layout.Content key="0">
                     <h1>任务管理</h1>
                     {this.state.err_msg}
                 </Layout.Content>
             );
         } else {
             return (
-                <Layout.Content>
+                <Layout.Content key="0">
                     <h1>任务管理</h1>
                     <Table dataSource={this.state.task_list} columns={columns} />
                 </Layout.Content>

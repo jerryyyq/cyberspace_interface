@@ -45,7 +45,6 @@ class App extends React.Component {
                             <Menu.Item key="3">指纹管理</Menu.Item>
                             <Menu.Item key="4">弱口令管理</Menu.Item>
                             <Menu.Item key="5">POC管理</Menu.Item>
-
                         </Menu>
                     </Sider>
 
