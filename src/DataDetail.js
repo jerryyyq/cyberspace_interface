@@ -2,18 +2,20 @@ import React from 'react';
 import { Popover } from 'antd';
 
 function DataDetail(title, record) {
-    let content = (
-        <table border="0">
-        {Object.keys(record).forEach(function(key) {
-            <tr><td> {key} </td><td> {record[key]} </td></tr>
-        })}
-        </table>
-    );
+    console.log("record = ", record)
 
-    console.log("content = ", content)
+    const SHOW_CONTENT = (
+        <table border="1"><thead><tr><td> 字段 </td><td> 值 </td></tr></thead><tbody>
+        {
+            Object.keys(record).map(key => (
+                <tr><td> {key} </td><td> {record[key]} </td></tr>
+            ))
+        }
+        </tbody></table>
+    )
 
     return (
-        <Popover content={content} title={title}>
+        <Popover content={SHOW_CONTENT} title={title}>
             <a>{title}</a>
         </Popover>
     );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Table } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import DataDetail from './DataDetail.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -49,7 +50,7 @@ class ContentRemote extends React.Component {
               title: '索引',
               dataIndex: 'id',
               key: 'id',
-              render: text => <a>{text}</a>,
+              render: (text, record) => DataDetail(text, record),
             },
             {
               title: 'IP',

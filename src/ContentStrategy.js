@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Table } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import DataDetail from './DataDetail.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -49,7 +50,7 @@ class ContentStrategy extends React.Component {
               title: '名称',
               dataIndex: 'name',
               key: 'name',
-              render: text => <a>{text}</a>,
+              render: (text, record) => DataDetail(text, record),
             },
             {
                 title: 'md5',
