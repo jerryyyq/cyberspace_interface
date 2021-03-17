@@ -1,5 +1,5 @@
 const APP_CONFIG = {
-    DOMAIN_URL: "http://192.168.205.180:29080/cloud_nmap_api/",
+    DOMAIN_URL: "http://127.0.0.1:29080/cloud_nmap_api/",
 }
 
 
@@ -31,4 +31,14 @@ function yyq_fetch(url, method, on_ok, on_error) {
     }) 
 }
 
-export { APP_CONFIG, yyq_fetch };
+function string_is_empty(str) {
+    if(typeof str === "undefined" || str === null || str === "")
+        return true;
+
+    if (str.replace(/(^s*)|(s*$)/g, "").length === 0)
+        return true;
+
+    return false;
+}
+
+export { APP_CONFIG, yyq_fetch, string_is_empty };

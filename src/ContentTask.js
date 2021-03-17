@@ -1,10 +1,13 @@
 import React from 'react';
-import { Layout, Table } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import { Layout, Table, Card } from 'antd';
+import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
+import TaskAdd from './TaskAdd.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const { Content } = Layout;
 
 class ContentTask extends React.Component {
     constructor(props) {
@@ -33,9 +36,6 @@ class ContentTask extends React.Component {
         )
     }
 
-    showTaskInfo(event) {
-
-    }
 
     handleDeleteTask(event) {
 
@@ -104,17 +104,23 @@ class ContentTask extends React.Component {
 
         if(this.state.err_msg !== "") {
             return (
-                <Layout.Content key="0">
+                <Content key="0">
                     <h1>任务管理</h1>
                     {this.state.err_msg}
-                </Layout.Content>
+                </Content>
             );
         } else {
             return (
-                <Layout.Content key="0">
-                    <h1>任务管理</h1>
+                <Content key="0">
+                    <h2>任务管理</h2>
+                    <div className="Content">
+                    <TaskAdd refresh_list={this.fetchAllTaskList} /><br />
+
+                    <Card title="任务列表">
                     <Table dataSource={this.state.task_list} columns={columns} />
-                </Layout.Content>
+                    </Card>
+                    </div>
+                </Content>
             );
         }
 

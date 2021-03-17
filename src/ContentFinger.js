@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Table } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -21,7 +21,7 @@ class ContentFinger extends React.Component {
         yyq_fetch(url, 'GET', 
             (data) => {
                 this.setState({
-                    poc_list: data.finger_list
+                    finger_list: data.finger_list
                 })
             }, 
             (err_msg) => {
@@ -49,7 +49,7 @@ class ContentFinger extends React.Component {
                 title: '索引',
                 dataIndex: 'id',
                 key: 'id',
-                render: text => <a>{text}</a>,
+                render: text => <a href="javascript:void(0)">{text}</a>,
             },
             {
               title: '名称',

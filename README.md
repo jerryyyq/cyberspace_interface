@@ -3,6 +3,8 @@ This project is a Web front end of network asset detection service based on reac
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+After you clone this project, you should run: "npm install" at the project's directiory befor run "npm start". 
+
 ## Available Scripts
 
 In the project directory, you can run:

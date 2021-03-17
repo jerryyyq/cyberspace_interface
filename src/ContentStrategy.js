@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Table } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './publid_fun.js';
+import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import { CloseCircleOutlined } from '@ant-design/icons';
 

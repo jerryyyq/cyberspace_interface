@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu, PageHeader } from 'antd';
-import zhCN from 'antd/lib/locale/zh_CN';
+// import zhCN from 'antd/lib/locale/zh_CN';
 import moment from 'moment';
 import ContentTask from './ContentTask.js'
 import ContentNode from './ContentNode.js'
