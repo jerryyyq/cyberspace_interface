@@ -128,11 +128,13 @@ class TaskAdd extends React.Component {
         } else if (this.state.scan_type === "4") {
             formData.append("poc_name_list", this.state.poc_name_list);
         }
+        console.log("formData = ", formData)
 
         let fetch_data = formData
         if(this.state._ip_tabs_index === "0"){
             let object = {};
             formData.forEach((value, key) => {object[key] = value});
+            object["priority"] = parseInt(object["priority"])
             fetch_data = JSON.stringify(object);
         }
         console.log("fetch_data = ", fetch_data)
