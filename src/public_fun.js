@@ -1,17 +1,25 @@
 const APP_CONFIG = {
-    DOMAIN_URL: "http://127.0.0.1:29080/cloud_nmap_api/",
+    DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
 }
 
 
-function yyq_fetch(url, method, on_ok, on_error) {
+function yyq_fetch(url, method, on_ok, on_error, data=null) {
+    let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
+    if(typeof data === "FormData") {
+        console.log("yyq_fetch, data is FormData")
+        content_type = ""
+    }
+
     fetch(url, {
         method: method,
-        headers:{
+        headers: {
             //'Content-Type':'application/json;charset=UTF-8'
-            'Content-Type':'text/plain'
+            'Content-Type': content_type
         },
-        mode:'cors',
-        cache:'default'
+        body: data,
+        //mode: 'cors',
+        redirect: 'follow',
+        cache: 'default'
     })
     .then(res => {
         console.log("res = ", res); 

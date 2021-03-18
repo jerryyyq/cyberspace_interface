@@ -28,12 +28,12 @@ class TaskAdd extends React.Component {
             _ip_tabs_index: "0",
             _port_tabs_index: "0",
             template_list: [],
-            upload_file: ""
+            upload_file: null
         };
     }
 
     onChangeTaskName = (e) => {
-        console.log("e = ", e, ", value = ", e.target.value)
+        // console.log("e = ", e, ", value = ", e.target.value)
         this.setState({ task_name: e.target.value })
     }
 
@@ -51,6 +51,14 @@ class TaskAdd extends React.Component {
 
     onChangePocName = (e) => {
         this.setState({ poc_name_list: e.target.value })
+    }
+
+    onChangeIpTabs = (key) => {
+        this.setState({ _ip_tabs_index: key })
+    }
+
+    onChangePortTabs = (key) => {
+        this.setState({ _port_tabs_index: key })
     }
 
     onChangeIpList = (e) => {
@@ -78,21 +86,30 @@ class TaskAdd extends React.Component {
     }
 
     onSubmitForm = (e) => {
+        let url = APP_CONFIG.DOMAIN_URL + 'scan_task'
+        const formData = new FormData();
+
         if(string_is_empty(this.state.task_name)){
             alert("任务名称不能为空！");
             return;
         }
+        formData.append("task_name", this.state.task_name);
+        formData.append("priority", parseInt(this.state.priority));
+        formData.append("scan_type", this.state.scan_type);
 
         if(this.state._ip_tabs_index === "0"){
             if(string_is_empty(this.state.ip_list)){
                 alert("IP 列表不能为空！");
                 return;
             }
+            formData.append("ip_list", this.state.ip_list);
         } else if(this.state._ip_tabs_index === "1"){
             if(string_is_empty(this.state.upload_file)){
                 alert("请选择一个 IP 列表文件！");
                 return;
             }
+            formData.append("upload", this.state.upload_file);
+            url = APP_CONFIG.DOMAIN_URL + 'scan_task/upload'
         }
 
         if(this.state._port_tabs_index === "0"){
@@ -100,24 +117,27 @@ class TaskAdd extends React.Component {
                 alert("TCP 端口列表不能为空！");
                 return;
             }
+            formData.append("tport_list", this.state.tport_list);
+            formData.append("uport_list", this.state.uport_list);
+        } else if(this.state._port_tabs_index === "1"){
+            formData.append("template", this.state.template);
         }
 
+        if(this.state.scan_type === "3") {
+            formData.append("strategy", this.state.strategy);
+        } else if (this.state.scan_type === "4") {
+            formData.append("poc_name_list", this.state.poc_name_list);
+        }
 
+        let fetch_data = formData
+        if(this.state._ip_tabs_index === "0"){
+            let object = {};
+            formData.forEach((value, key) => {object[key] = value});
+            fetch_data = JSON.stringify(object);
+        }
+        console.log("fetch_data = ", fetch_data)
 
-
-
-
-
-
-
-
-        const formData = new FormData();
-        formData.append("task_name", this.state.task_name);
-        formData.append("upload", this.state.upload_file);
-      
-        let url = APP_CONFIG.DOMAIN_URL + 'scan_task/upload'
-
-        yyq_fetch(url, 'POST', data => this.props.refresh_list, (err_msg) => {alert("Submit Error: " + err_msg);})
+        yyq_fetch(url, 'POST', data => this.props.refresh_list, (err_msg) => {alert("Submit Error: " + err_msg);}, fetch_data)
     }
 
     fetchAllTemplateList = () => {
@@ -158,23 +178,23 @@ class TaskAdd extends React.Component {
                 任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
                 优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
                     {Array.from(Array(10), (e, i) => {
-                        return <Option value={i+1}>{i+1}</Option>
+                        return <Option value={i+1} key={i+1}>{i+1}</Option>
                     })}
                 </Select>
                 扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
-                    <Option value="1">快速探测</Option>
-                    <Option value="2">普通探测</Option>
-                    <Option value="3">弱口令探测</Option>
-                    <Option value="4">POC探测</Option>
-                    <Option value="5">密罐探测</Option>
-                    <Option value="6">工控探测</Option>
-                    <Option value="7">僵网探测</Option>
+                    <Option value="1" key="1">快速探测</Option>
+                    <Option value="2" key="21">普通探测</Option>
+                    <Option value="3" key="3">弱口令探测</Option>
+                    <Option value="4" key="4">POC探测</Option>
+                    <Option value="5" key="5">密罐探测</Option>
+                    <Option value="6" key="6">工控探测</Option>
+                    <Option value="7" key="7">僵网探测</Option>
                 </Select>
                 </Space><p></p>
 
                 { ATTACH_INPUT }
 
-                <p></p><Tabs defaultActiveKey={this.state._ip_tabs_index}>
+                <p></p><Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeIpTabs}>
                     <TabPane tab="输入 IP 列表" key="0">
                         <Input addonBefore="IP 列表：" value={this.state.ip_list} onChange={this.onChangeIpList}/>
                     </TabPane>
@@ -183,7 +203,7 @@ class TaskAdd extends React.Component {
                     </TabPane>
                 </Tabs><p></p>
                 <p></p>
-                <Tabs defaultActiveKey={this.state._port_tabs_index}>
+                <Tabs defaultActiveKey={this.state._port_tabs_index} onChange={this.onChangePortTabs}>
                     <TabPane tab="端口列表" key="0">
                         <Input addonBefore="TCP 端口：" value={this.state.tport_list}  onChange={this.onChangeTcpPort}/>
                         <Input addonBefore="UDP 端口：" value={this.state.uport_list}  onChange={this.onChangeUdpPort}/>
@@ -192,7 +212,7 @@ class TaskAdd extends React.Component {
                     <Select defaultValue={this.state.template} onChange={this.onChangeTemplate}>
                         {Array.from(this.state.template_list, (e, i) => {
                             // console.log("e = ", e)
-                            return <Option value={e}>{e}</Option>
+                            return <Option value={e} key={e}>{e}</Option>
                         })}
                     </Select>
                     </TabPane>
