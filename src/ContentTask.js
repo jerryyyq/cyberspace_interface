@@ -3,7 +3,7 @@ import { Layout, Table, Card } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -19,7 +19,7 @@ class ContentTask extends React.Component {
         };
     }
 
-    fetchAllTaskList() {
+    fetchAllTaskList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "task_list";
 
         yyq_fetch(url, 'GET', 
@@ -116,7 +116,7 @@ class ContentTask extends React.Component {
                     <div className="Content">
                     <TaskAdd refresh_list={this.fetchAllTaskList} /><br />
 
-                    <Card title="任务列表">
+                    <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllTaskList}/>}>
                     <Table dataSource={this.state.task_list} columns={columns} />
                     </Card>
                     </div>

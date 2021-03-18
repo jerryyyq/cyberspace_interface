@@ -1,9 +1,11 @@
 import React from 'react';
-import { Card, Space, Input, Select, Tabs, Button } from 'antd';
+import { Collapse, Space, Input, Select, Tabs, Button } from 'antd';
 import { APP_CONFIG, yyq_fetch, string_is_empty } from './public_fun.js';
+import { UpOutlined } from '@ant-design/icons';
 
 import './App.css';
 
+const { Panel } = Collapse;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -25,6 +27,7 @@ class TaskAdd extends React.Component {
             tport_list: "",
             uport_list: "",
             task_id: "",
+            _active_key: "",
             _ip_tabs_index: "0",
             _port_tabs_index: "0",
             template_list: [],
@@ -51,6 +54,11 @@ class TaskAdd extends React.Component {
 
     onChangePocName = (e) => {
         this.setState({ poc_name_list: e.target.value })
+    }
+
+    onChangeActiveKey = (key) => {
+        console.log("key = ", key);
+        this.setState({ _active_key: key })
     }
 
     onChangeIpTabs = (key) => {
@@ -139,7 +147,12 @@ class TaskAdd extends React.Component {
         }
         console.log("fetch_data = ", fetch_data)
 
-        yyq_fetch(url, 'POST', data => this.props.refresh_list, (err_msg) => {alert("Submit Error: " + err_msg);}, fetch_data)
+        yyq_fetch(url, 'POST', data => {
+                alert("提交成功！任务 ID 是：" + data.task_id + "\n创建需要时间，请稍后刷新列表获取任务信息。\n请不要重复提交。")
+                this.setState({_active_key: ""})
+            }, (err_msg) => {
+                alert("Submit Error: " + err_msg);
+            }, fetch_data)
     }
 
     fetchAllTemplateList = () => {
@@ -175,7 +188,9 @@ class TaskAdd extends React.Component {
         }
 
         return (
-            <Card title="添加任务">
+            <Collapse defaultActiveKey={['1']} activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
+                expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
+            <Panel header="添加任务" key="1">
                 <p></p><Space>
                 任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
                 优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
@@ -221,7 +236,8 @@ class TaskAdd extends React.Component {
                 </Tabs>
                 <p></p>
                 <Button type="primary" onClick={this.onSubmitForm}>提交</Button>
-            </Card>
+            </Panel>
+            </Collapse>
         )
     }
 }
