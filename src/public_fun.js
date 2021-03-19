@@ -4,20 +4,23 @@ const APP_CONFIG = {
 
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
-    let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
-    if(typeof data === "FormData") {
+    console.log("data type is: ", typeof data)
+    let opt_head = {}
+
+    if(typeof data === "object") {
         console.log("yyq_fetch, data is FormData")
-        content_type = ""
+        let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
+        opt_head = {}
+    } else {
+        let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
+        opt_head = {'Content-Type':content_type}
     }
 
     fetch(url, {
         method: method,
-        headers: {
-            //'Content-Type':'application/json;charset=UTF-8'
-            'Content-Type': content_type
-        },
+        headers: opt_head,
         body: data,
-        //mode: 'cors',
+        mode: 'cors',
         redirect: 'follow',
         cache: 'default'
     })

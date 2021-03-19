@@ -1,7 +1,7 @@
 import React from 'react';
-import { Collapse, Space, Input, Select, Tabs, Button } from 'antd';
+import { Collapse, Space, Input, Select, Tabs, Button, Upload } from 'antd';
 import { APP_CONFIG, yyq_fetch, string_is_empty } from './public_fun.js';
-import { UpOutlined } from '@ant-design/icons';
+import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -31,7 +31,7 @@ class TaskAdd extends React.Component {
             _ip_tabs_index: "0",
             _port_tabs_index: "0",
             template_list: [],
-            upload_file: null
+            upload_files: []
         };
     }
 
@@ -73,12 +73,12 @@ class TaskAdd extends React.Component {
         this.setState({ ip_list: e.target.value })
     }
 
-    onSelectFile = (e) => {
-        // var files = e.target.files;
-        // console.log(files);
-        // var filesArr = Array.prototype.slice.call(files);
-        // console.log(filesArr);
-        this.setState({ upload_file: e.target.files[0] });
+    onSelectFile = (info) => {
+        console.log(info);
+        let fileList = [...info.fileList];
+        fileList = fileList.slice(-1);
+
+        this.setState({ upload_files: fileList });
     }
 
     onChangeTcpPort = (e) => {
@@ -91,6 +91,10 @@ class TaskAdd extends React.Component {
 
     onChangeTemplate = (value) => {
         this.setState({ template: value })
+    }
+
+    handleBeforeUpload = (file) => {
+        return false
     }
 
     onSubmitForm = (e) => {
@@ -112,11 +116,11 @@ class TaskAdd extends React.Component {
             }
             formData.append("ip_list", this.state.ip_list);
         } else if(this.state._ip_tabs_index === "1"){
-            if(string_is_empty(this.state.upload_file)){
+            if(1 > this.state.upload_files.length){
                 alert("请选择一个 IP 列表文件！");
                 return;
             }
-            formData.append("upload", this.state.upload_file);
+            formData.append("upload", this.state.upload_files[0].originFileObj);
             url = APP_CONFIG.DOMAIN_URL + 'scan_task/upload'
         }
 
@@ -139,11 +143,19 @@ class TaskAdd extends React.Component {
         console.log("formData = ", formData)
 
         let fetch_data = formData
-        if(this.state._ip_tabs_index === "0"){
+        if(this.state._ip_tabs_index === "0") {
             let object = {};
             formData.forEach((value, key) => {object[key] = value});
             object["priority"] = parseInt(object["priority"])
             fetch_data = JSON.stringify(object);
+        } else {
+            /*
+            const data = new URLSearchParams();
+            for (const pair of formData) {
+                data.append(pair[0], pair[1]);
+            }
+            fetch_data = data
+            */
         }
         console.log("fetch_data = ", fetch_data)
 
@@ -151,17 +163,23 @@ class TaskAdd extends React.Component {
                 alert("提交成功！任务 ID 是：" + data.task_id + "\n创建需要时间，请稍后刷新列表获取任务信息。\n请不要重复提交。")
                 this.setState({_active_key: ""})
             }, (err_msg) => {
-                alert("Submit Error: " + err_msg);
+                alert("提交失败: " + err_msg);
             }, fetch_data)
     }
 
-    fetchAllTemplateList = () => {
+    fetchAllPortTemplateList = () => {
+        console.log("fetchAllPortTemplateList")
         let url = APP_CONFIG.DOMAIN_URL + "template/port_template_list";
 
         yyq_fetch(url, 'GET', 
             (data) => {
                 this.setState({
                     template_list: data.template_list
+                })
+
+                Array.from(data.template_list, (e, i) => {
+                    // console.log("e = ", e)
+                    this.fetchOnePortTemplateInfo(e)
                 })
             }, 
             (err_msg) => {
@@ -172,8 +190,24 @@ class TaskAdd extends React.Component {
         )
     }
 
+    fetchOnePortTemplateInfo = (template_name) => {
+        let url = APP_CONFIG.DOMAIN_URL + "template/port_template/" + template_name;
+        yyq_fetch(url, 'GET', 
+        (data) => {
+            this.setState({
+                ['_pt_' + template_name]: data.template
+            })
+        }, 
+        (err_msg) => {
+            console.log("fetchOnePortTemplateInfo(" + template_name + "), err_msg = ", err_msg)
+            this.setState({
+                err_msg: err_msg
+            })
+        })
+    }
+
     componentDidMount() {
-        this.fetchAllTemplateList()
+        this.fetchAllPortTemplateList()
     }
   
     componentWillUnmount() {
@@ -216,7 +250,9 @@ class TaskAdd extends React.Component {
                         <Input addonBefore="IP 列表：" value={this.state.ip_list} onChange={this.onChangeIpList}/>
                     </TabPane>
                     <TabPane tab="上传 IP 列表" key="1">
-                        <Input type="file" name="upload" accept=".zip" value={this.state.upload_file} onChange={this.onSelectFile}/>
+                        <Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
+                            <Button icon={<UploadOutlined />}>选择文件</Button>
+                        </Upload>
                     </TabPane>
                 </Tabs><p></p>
                 <p></p>
@@ -231,7 +267,8 @@ class TaskAdd extends React.Component {
                             // console.log("e = ", e)
                             return <Option value={e} key={e}>{e}</Option>
                         })}
-                    </Select>
+                    </Select><p></p>
+                    {JSON.stringify(this.state['_pt_' + this.state.template])}
                     </TabPane>
                 </Tabs>
                 <p></p>
