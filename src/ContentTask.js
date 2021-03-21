@@ -1,9 +1,9 @@
 import React from 'react';
-import { Layout, Table, Card } from 'antd';
+import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
-import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined, ProfileOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -36,9 +36,28 @@ class ContentTask extends React.Component {
         )
     }
 
+    onDeleteTask = (task_id, e) => {
+        console.log("onDeleteTask, task_id = ", task_id, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "scan_task/" + task_id;
 
-    handleDeleteTask(event) {
+        yyq_fetch(url, 'DELETE', 
+            (data) => {
+                this.setState({
+                    task_list: this.state.task_list.filter(function(item) {
+                        return item["task_id"] !== task_id;
+                    })
+                })
+            }, 
+            (err_msg) => {
+                this.setState({
+                    err_msg: err_msg
+                })
+            }
+        )
+    }
 
+    onShowResult = (task_id, e) => {
+        console.log("onShowResult, task_id = ", task_id)
     }
 
     componentDidMount() {
@@ -49,6 +68,9 @@ class ContentTask extends React.Component {
     }
 
     render() {
+        let SHOW_RESULT
+
+
         const columns = [
             {
                 title: '任务 ID',
@@ -94,9 +116,20 @@ class ContentTask extends React.Component {
             {
                 title: '操作',
                 key: 'action',
-                render: (text, record) => (
-                    <a onClick={this.handleDeleteTask}> <CloseCircleOutlined style={{ color: 'hotpink' }} /> </a>
-                ),
+                render: (text, record) => {
+                    if (2 === record.data_state) {
+                        return (
+                            <Space>
+                            <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                            <a onClick={e => {this.onShowResult(record.task_id, e)}}><Tooltip title='查看结果'><ProfileOutlined style={{ color: 'green' }} /></Tooltip></a>
+                            </Space>
+                        )
+                    } else {
+                        return (
+                            <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                        )
+                    }
+                }
             },
         ];
 
