@@ -137,14 +137,14 @@ class ContentTask extends React.Component {
 
         if(this.state.err_msg !== "") {
             return (
-                <Content key="0">
+                <Content>
                     <h1>任务管理</h1>
                     {this.state.err_msg}
                 </Content>
             );
         } else {
             return (
-                <Content key="0">
+                <Content>
                     <h2>任务管理</h2>
                     <div className="Content">
                     <TaskAdd refresh_list={this.fetchAllTaskList} /><br />

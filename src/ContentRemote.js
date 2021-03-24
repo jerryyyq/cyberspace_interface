@@ -1,10 +1,13 @@
 import React from 'react';
-import { Layout, Table } from 'antd';
+import { Layout, Table, Card } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import RemoteAdd from './RemoteAdd.js';
+import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const { Content } = Layout;
 
 class ContentRemote extends React.Component {
     constructor(props) {
@@ -131,10 +134,16 @@ class ContentRemote extends React.Component {
             );
         } else {
             return (
-                <Layout.Content>
-                    <h1>远程安装</h1>
+                <Content>
+                    <h2>远程安装管理</h2>
+                    <div className="Content">
+                    <RemoteAdd refresh_list={this.fetchAllRemoteList} /><br />
+
+                    <Card title="远程机器列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllRemoteList}/>}>
                     <Table dataSource={this.state.remote_list} columns={columns} />
-                </Layout.Content>
+                    </Card>
+                    </div>
+                </Content>
             );
         }
 

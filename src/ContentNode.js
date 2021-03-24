@@ -1,8 +1,8 @@
 import React from 'react';
-import { Layout, Table } from 'antd';
+import { Layout, Table, Tooltip } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -33,8 +33,25 @@ class ContentNode extends React.Component {
         )
     }
 
-    handleDeleteTask(event) {
+    onEnableNode = (node_id, enable) => {
+        console.log("onEnableNode, node_id = ", node_id, ", enable = ", enable)
+        let url = APP_CONFIG.DOMAIN_URL + "node_enable";
 
+        yyq_fetch(url, 'PUT', 
+            (data) => {
+                this.setState({
+                    task_list: this.state.node_list.map(function(item) {
+                        if (item["node_id"] === node_id)
+                            item["enable"] = enable 
+                        return item;
+                    })
+                })
+            }, 
+            (err_msg) => {
+                alert(err_msg)
+            },
+            JSON.stringify({"node_id":node_id, "enable":enable})
+        )
     }
 
     componentDidMount() {
@@ -105,9 +122,10 @@ class ContentNode extends React.Component {
             {
                 title: '操作',
                 key: 'action',
-                render: (text, record) => (
-                    <a onClick={this.handleDeleteTask}> <CloseCircleOutlined style={{ color: 'hotpink' }} /> </a>
-                ),
+                render: (text, record) => {
+                    if (record.enable) return (<a onClick={e => {this.onEnableNode(record.node_id, 0)}}><Tooltip title='禁用'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>)
+                    else return (<a onClick={e => {this.onEnableNode(record.node_id, 1)}}><Tooltip title='启用'><CheckCircleOutlined style={{ color: 'green' }} /></Tooltip></a>)   
+                }
             },
         ];
 
