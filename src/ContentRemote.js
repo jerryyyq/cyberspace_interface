@@ -74,6 +74,7 @@ class ContentRemote extends React.Component {
                 title: '口令',
                 dataIndex: 'password',
                 key: 'password',
+                render: (text, record) => window.atob(text)
             },
             {
                 title: '说明',
@@ -137,7 +138,7 @@ class ContentRemote extends React.Component {
                 <Content>
                     <h2>远程安装管理</h2>
                     <div className="Content">
-                    <RemoteAdd refresh_list={this.fetchAllRemoteList} /><br />
+                    <RemoteAdd onChange={()=>this.fetchAllRemoteList()} /><br />
 
                     <Card title="远程机器列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllRemoteList}/>}>
                     <Table dataSource={this.state.remote_list} columns={columns} />

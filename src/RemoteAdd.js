@@ -1,13 +1,29 @@
 import React from 'react';
-import { Collapse, Space, Input, Select, Tabs, Button, Upload } from 'antd';
+import { Collapse, Space, Input, Button, Form, InputNumber } from 'antd';
 import { APP_CONFIG, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
 const { Panel } = Collapse;
-const { Option } = Select;
-const { TabPane } = Tabs;
+const { TextArea } = Input;
+
+
+const layout = {
+    labelCol: {
+      span: 8,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+  const tailLayout = {
+    wrapperCol: {
+      offset: 8,
+      span: 16,
+    },
+  };
+
 
 class RemoteAdd extends React.Component {
     constructor(props) {
@@ -17,21 +33,17 @@ class RemoteAdd extends React.Component {
 
         this.state = {
             err_msg: "",
-            task_name: "",
-            priority: 1,
-            scan_type: "2",
-            strategy: "default",
-            poc_name_list: "all",
-            template: "top10",
-            ip_list: "",
-            tport_list: "",
-            uport_list: "",
-            task_id: "",
-            _active_key: "",
-            _ip_tabs_index: "0",
-            _port_tabs_index: "0",
-            template_list: [],
-            upload_files: []
+            id: 0,
+            ip: "",
+            ssh_port: 22,
+            user_name: "",
+            password: "",
+            explanation: "",
+            preset_node_id: "",
+            center_ip: "",
+            center_api_port: 29080,
+            center_data_port: 29090,
+            _active_key: ""
         };
     }
 
@@ -40,56 +52,110 @@ class RemoteAdd extends React.Component {
         this.setState({ _active_key: key })
     }
 
+    onChangeIP = (e) => {
+        // console.log("e = ", e, ", value = ", e.target.value)
+        this.setState({ ip: e.target.value })
+    }
+
+    onChangeSSHPort = (value) => {
+        console.log("value = ", value)
+        this.setState({ ssh_port: value === null ? 22 : value })
+    }
+
+    onChangeUserName = (e) => {
+        this.setState({ user_name: e.target.value })
+    }
+
+    onChangePassword = (e) => {
+        // console.log("e = ", e, ", value = ", e.target.value)
+        this.setState({ password: e.target.value })
+    }
+
+    onChangeCenterIP = (e) => {
+        this.setState({ center_ip: e.target.value })
+    }
+
+    onChangeAPIPort = (value) => {
+        this.setState({ center_api_port: value === null ? 29080 : value })
+    }
+
+    onChangeDataPort = (value) => {
+        // console.log("e = ", e, ", value = ", e.target.value)
+        this.setState({ center_data_port: value === null ? 29090 : value })
+    }
+
+    onChangeExplanation = (e) => {
+        this.setState({ explanation: e.target.value })
+    }
+
+    onChangePresetNodeID = (e) => {
+        this.setState({ preset_node_id: e.target.value })
+    }
+
+    onSubmitForm = (e) => {
+        if(string_is_empty(this.state.ip)){
+            alert("IP 不能为空！");
+            return;
+        }
+
+        if(string_is_empty(this.state.user_name)){
+            alert("用户名不能为空！");
+            return;
+        }
+
+        if(string_is_empty(this.state.password)){
+            alert("口令不能为空！");
+            return;
+        }
+
+        if(string_is_empty(this.state.center_ip)){
+            alert("中心 IP 地址不能为空！");
+            return;
+        }
+
+        let fetch_data = JSON.stringify({
+            ip: this.state.ip, 
+            ssh_port: parseInt(this.state.ssh_port),
+            user_name: this.state.user_name,
+            password: this.state.password,
+            explanation: this.state.explanation,
+            preset_node_id: this.state.preset_node_id,
+            center_ip: this.state.center_ip,
+            center_api_port: parseInt(this.state.center_api_port),
+            center_data_port: parseInt(this.state.center_data_port),
+        })
+        console.log("fetch_data = ", fetch_data)
+
+        let url = APP_CONFIG.DOMAIN_URL + 'remote_machine'
+
+        yyq_fetch(url, 'POST', data => {
+                this.setState({_active_key: ""})
+                this.props.onChange()
+            }, (err_msg) => {
+                alert("提交失败: " + err_msg);
+            }, fetch_data)
+    }
+
     render() {
         return (
             <Collapse defaultActiveKey={['1']} activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header="添加远程机器" key="1">
-                <p></p><Space>
-                任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
-                优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
-                    {Array.from(Array(10), (e, i) => {
-                        return <Option value={i+1} key={i+1}>{i+1}</Option>
-                    })}
-                </Select>
-                扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
-                    <Option value="1" key="1">快速探测</Option>
-                    <Option value="2" key="21">普通探测</Option>
-                    <Option value="3" key="3">弱口令探测</Option>
-                    <Option value="4" key="4">POC探测</Option>
-                    <Option value="5" key="5">密罐探测</Option>
-                    <Option value="6" key="6">工控探测</Option>
-                    <Option value="7" key="7">僵网探测</Option>
-                </Select>
-                </Space><p></p>
-
-                <p></p><Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeIpTabs}>
-                    <TabPane tab="输入 IP 列表" key="0">
-                        <Input addonBefore="IP 列表：" value={this.state.ip_list} onChange={this.onChangeIpList}/>
-                    </TabPane>
-                    <TabPane tab="上传 IP 列表" key="1">
-                        <Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
-                            <Button icon={<UploadOutlined />}>选择文件</Button>
-                        </Upload>
-                    </TabPane>
-                </Tabs><p></p>
-                <p></p>
-                <Tabs defaultActiveKey={this.state._port_tabs_index} onChange={this.onChangePortTabs}>
-                    <TabPane tab="端口列表" key="0">
-                        <Input addonBefore="TCP 端口：" value={this.state.tport_list}  onChange={this.onChangeTcpPort}/>
-                        <Input addonBefore="UDP 端口：" value={this.state.uport_list}  onChange={this.onChangeUdpPort}/>
-                    </TabPane>
-                    <TabPane tab="端口模板" key="1">
-                    <Select defaultValue={this.state.template} onChange={this.onChangeTemplate}>
-                        {Array.from(this.state.template_list, (e, i) => {
-                            // console.log("e = ", e)
-                            return <Option value={e} key={e}>{e}</Option>
-                        })}
-                    </Select><p></p>
-                    {JSON.stringify(this.state['_pt_' + this.state.template])}
-                    </TabPane>
-                </Tabs>
-                <p></p>
+                <Space>
+                <div style={{color:"red"}}>*</div>IP 地址：<Input value={this.state.ip} style={{ width: 300 }} onChange={this.onChangeIP} />
+                <div style={{color:"red"}}>*</div>ssh 端口：<InputNumber min={1} max={65535} value={this.state.ssh_port} style={{ width: 100 }} onChange={this.onChangeSSHPort} />
+                </Space><p /><Space>
+                <div style={{color:"red"}}>*</div>用户名：<Input value={this.state.user_name} style={{ width: 300 }} onChange={this.onChangeUserName} />
+                <div style={{color:"red"}}>*</div>口令：<Input value={this.state.password} style={{ width: 300 }} onChange={this.onChangePassword} />
+                </Space><p /><Space>
+                <div style={{color:"red"}}>*</div>中心 IP 地址：<Input value={this.state.center_ip} style={{ width: 300 }} onChange={this.onChangeCenterIP} />
+                <div style={{color:"red"}}>*</div>中心 API 端口：<InputNumber min={1} max={65535} value={this.state.center_api_port} style={{ width: 100 }} onChange={this.onChangeAPIPort} />
+                <div style={{color:"red"}}>*</div>中心数据端口：<InputNumber min={1} max={65535} value={this.state.center_data_port} style={{ width: 100 }} onChange={this.onChangeDataPort} />
+                </Space><p /><Space>
+                说明：<TextArea style={{ width: 600 }} value={this.state.explanation} onChange={this.onChangeExplanation} />
+                </Space><p /><Space>
+                预设置节点 ID：<Input value={this.state.preset_node_id} style={{ width: 300 }} onChange={this.onChangePresetNodeID} />
+                </Space><p />
                 <Button type="primary" onClick={this.onSubmitForm}>提交</Button>
             </Panel>
             </Collapse>
