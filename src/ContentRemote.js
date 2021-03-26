@@ -1,9 +1,9 @@
 import React from 'react';
-import { Layout, Table, Card } from 'antd';
+import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import RemoteAdd from './RemoteAdd.js';
-import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -15,7 +15,9 @@ class ContentRemote extends React.Component {
         this.state = {
             cur_page: 0,
             err_msg: "",
-            remote_list: []
+            remote_list: [],
+            edit_record: null,
+            add_expand: false
         };
     }
 
@@ -25,7 +27,12 @@ class ContentRemote extends React.Component {
         yyq_fetch(url, 'GET', 
             (data) => {
                 this.setState({
-                    remote_list: data.remote_list
+                    remote_list: data.remote_list.map(function(item){
+                        item["password"] = window.atob(item["password"]) 
+                        return item;
+                    }),
+                    edit_record: null,
+                    add_expand: false
                 })
             }, 
             (err_msg) => {
@@ -36,8 +43,35 @@ class ContentRemote extends React.Component {
         )
     }
 
-    handleDeleteTask(event) {
+    onRemoteAddChange = (cancel_edit) => {
+        if(cancel_edit) {
+            this.setState({edit_record:null, add_expand:false})
+        } else {
+            this.fetchAllRemoteList()
+        }
+    }
 
+    onDeleteRemote = (id, e) => {
+        console.log("onDeleteRemote, id = ", id, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "remote_machine/" + id;
+
+        yyq_fetch(url, 'DELETE', 
+            (data) => {
+                this.setState({
+                    remote_list: this.state.remote_list.filter(function(item) {
+                        return item["id"] !== id;
+                    })
+                })
+            }, 
+            (err_msg) => {
+                alert("删除失败！err_msg = ", err_msg)
+            }
+        )
+    }
+
+    onEditRemote = (record, e) => {
+        console.log("onEditRemote,record = ", record, ", e = ", e)
+        this.setState({edit_record:record, add_expand:true})
     }
 
     componentDidMount() {
@@ -74,7 +108,6 @@ class ContentRemote extends React.Component {
                 title: '口令',
                 dataIndex: 'password',
                 key: 'password',
-                render: (text, record) => window.atob(text)
             },
             {
                 title: '说明',
@@ -120,7 +153,10 @@ class ContentRemote extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => (
-                    <a onClick={this.handleDeleteTask}> <CloseCircleOutlined style={{ color: 'hotpink' }} /> </a>
+                    <Space>
+                    <a onClick={e => {this.onDeleteRemote(record.id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                    <a onClick={e => {this.onEditRemote(record, e)}}><Tooltip title='修改'><EditOutlined style={{ color: 'green' }} /></Tooltip></a>
+                    </Space>
                 ),
             },
         ];
@@ -138,7 +174,7 @@ class ContentRemote extends React.Component {
                 <Content>
                     <h2>远程安装管理</h2>
                     <div className="Content">
-                    <RemoteAdd onChange={()=>this.fetchAllRemoteList()} /><br />
+                    <RemoteAdd edit_record={this.state.edit_record} expand={this.state.add_expand} onChange={this.onRemoteAddChange} /><br />
 
                     <Card title="远程机器列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllRemoteList}/>}>
                     <Table dataSource={this.state.remote_list} columns={columns} />

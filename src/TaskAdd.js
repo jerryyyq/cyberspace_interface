@@ -1,6 +1,6 @@
 import React from 'react';
 import { Collapse, Space, Input, Select, Tabs, Button, Upload } from 'antd';
-import { APP_CONFIG, yyq_fetch, string_is_empty } from './public_fun.js';
+import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -136,8 +136,16 @@ class TaskAdd extends React.Component {
         }
 
         if(this.state.scan_type === "3") {
+            if(string_is_empty(this.state.strategy)){
+                alert("策略名不能为空！");
+                return;
+            }
             formData.append("strategy", this.state.strategy);
         } else if (this.state.scan_type === "4") {
+            if(string_is_empty(this.state.poc_name_list)){
+                alert("POC 列表不能为空！");
+                return;
+            }
             formData.append("poc_name_list", this.state.poc_name_list);
         }
         console.log("formData = ", formData)
@@ -226,13 +234,13 @@ class TaskAdd extends React.Component {
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header="添加任务" key="1">
                 <p></p><Space>
-                任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
-                优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
+                {RED_STAR}任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
+                {RED_STAR}优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
                     {Array.from(Array(10), (e, i) => {
                         return <Option value={i+1} key={i+1}>{i+1}</Option>
                     })}
                 </Select>
-                扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
+                {RED_STAR}扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
                     <Option value="1" key="1">快速探测</Option>
                     <Option value="2" key="21">普通探测</Option>
                     <Option value="3" key="3">弱口令探测</Option>
@@ -247,10 +255,10 @@ class TaskAdd extends React.Component {
 
                 <p></p><Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeIpTabs}>
                     <TabPane tab="输入 IP 列表" key="0">
-                        <Input addonBefore="IP 列表：" value={this.state.ip_list} onChange={this.onChangeIpList}/>
+                        {RED_STAR}IP 列表：<Input style={{width:"100% - 100"}} value={this.state.ip_list} onChange={this.onChangeIpList}/>
                     </TabPane>
                     <TabPane tab="上传 IP 列表" key="1">
-                        <Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
+                        {RED_STAR}<Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
                             <Button icon={<UploadOutlined />}>选择文件</Button>
                         </Upload>
                     </TabPane>
@@ -258,11 +266,11 @@ class TaskAdd extends React.Component {
                 <p></p>
                 <Tabs defaultActiveKey={this.state._port_tabs_index} onChange={this.onChangePortTabs}>
                     <TabPane tab="端口列表" key="0">
-                        <Input addonBefore="TCP 端口：" value={this.state.tport_list}  onChange={this.onChangeTcpPort}/>
-                        <Input addonBefore="UDP 端口：" value={this.state.uport_list}  onChange={this.onChangeUdpPort}/>
+                        {RED_STAR}TCP 端口：<Input value={this.state.tport_list}  onChange={this.onChangeTcpPort}/>
+                        UDP 端口：<Input value={this.state.uport_list}  onChange={this.onChangeUdpPort}/>
                     </TabPane>
                     <TabPane tab="端口模板" key="1">
-                    <Select defaultValue={this.state.template} onChange={this.onChangeTemplate}>
+                    {RED_STAR}<Select defaultValue={this.state.template} onChange={this.onChangeTemplate}>
                         {Array.from(this.state.template_list, (e, i) => {
                             // console.log("e = ", e)
                             return <Option value={e} key={e}>{e}</Option>

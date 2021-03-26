@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collapse, Space, Input, Button, Form, InputNumber } from 'antd';
-import { APP_CONFIG, yyq_fetch, string_is_empty } from './public_fun.js';
-import { UpOutlined, UploadOutlined } from '@ant-design/icons';
+import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
+import { UpOutlined, UploadOutlined, ContactsFilled } from '@ant-design/icons';
 
 import './App.css';
 
@@ -27,6 +27,7 @@ const layout = {
 
 class RemoteAdd extends React.Component {
     constructor(props) {
+        console.log("props = ", props)
         super(props);
 
         const { old_task } = props;
@@ -47,9 +48,47 @@ class RemoteAdd extends React.Component {
         };
     }
 
+    static getDerivedStateFromProps(nextProps, prevState) {
+        console.log("getDerivedStateFromProps nextProps = ", nextProps, ", prevState = ", prevState)
+
+        let new_state = null
+        if(nextProps.edit_record) {
+            if (nextProps.edit_record.id !== prevState.id) {
+                new_state = nextProps.edit_record
+                new_state["_active_key"] = "1"
+            } 
+        } else if(0 !== prevState.id) {
+            new_state = {"id": 0}
+            new_state["_active_key"] = ""
+        }
+
+        /*
+        let new_active_key = nextProps.expand ? "1" : ""
+        if(new_active_key !== prevState._active_key) {
+            if(new_state === null) {
+                new_state = {_active_key: new_active_key}
+            } else {
+                new_state["_active_key"] = new_active_key
+            }
+        }
+        */
+
+        console.log("new_state = ", new_state)
+        return new_state
+    }
+
     onChangeActiveKey = (key) => {
         console.log("key = ", key);
-        this.setState({ _active_key: key })
+
+        if (key === "1") {
+            this.setState({ _active_key: key })
+        } else {
+            if(this.state.id === 0) {
+                this.setState({ _active_key: "" })
+            } else {
+                this.props.onChange(true)
+            }
+        }
     }
 
     onChangeIP = (e) => {
@@ -113,7 +152,7 @@ class RemoteAdd extends React.Component {
             return;
         }
 
-        let fetch_data = JSON.stringify({
+        let fetch_data = {
             ip: this.state.ip, 
             ssh_port: parseInt(this.state.ssh_port),
             user_name: this.state.user_name,
@@ -123,40 +162,52 @@ class RemoteAdd extends React.Component {
             center_ip: this.state.center_ip,
             center_api_port: parseInt(this.state.center_api_port),
             center_data_port: parseInt(this.state.center_data_port),
-        })
+        }
         console.log("fetch_data = ", fetch_data)
 
-        let url = APP_CONFIG.DOMAIN_URL + 'remote_machine'
+        if(this.state.id === 0) {
+            let url = APP_CONFIG.DOMAIN_URL + 'remote_machine'
 
-        yyq_fetch(url, 'POST', data => {
-                this.setState({_active_key: ""})
+            yyq_fetch(url, 'POST', data => {
+                    this.setState({_active_key: ""})
+                    this.props.onChange()
+                }, (err_msg) => {
+                    alert("提交失败: " + err_msg);
+                }, JSON.stringify(fetch_data))
+        } else {
+            fetch_data["id"] = parseInt(this.state.id)
+            let url = APP_CONFIG.DOMAIN_URL + 'remote_machine/' + this.state.id
+
+            yyq_fetch(url, 'PUT', data => {
+                this.setState({_active_key: "", id: 0, ip: ""})
                 this.props.onChange()
             }, (err_msg) => {
                 alert("提交失败: " + err_msg);
-            }, fetch_data)
+            }, JSON.stringify(fetch_data))
+        }
     }
 
     render() {
         return (
-            <Collapse defaultActiveKey={['1']} activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
+            <Collapse accordion activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header="添加远程机器" key="1">
                 <Space>
-                <div style={{color:"red"}}>*</div>IP 地址：<Input value={this.state.ip} style={{ width: 300 }} onChange={this.onChangeIP} />
-                <div style={{color:"red"}}>*</div>ssh 端口：<InputNumber min={1} max={65535} value={this.state.ssh_port} style={{ width: 100 }} onChange={this.onChangeSSHPort} />
+                {RED_STAR}IP 地址：<Input value={this.state.ip} style={{ width: 300 }} onChange={this.onChangeIP} />
+                {RED_STAR}ssh 端口：<InputNumber min={1} max={65535} value={this.state.ssh_port} style={{ width: 100 }} onChange={this.onChangeSSHPort} />
                 </Space><p /><Space>
-                <div style={{color:"red"}}>*</div>用户名：<Input value={this.state.user_name} style={{ width: 300 }} onChange={this.onChangeUserName} />
-                <div style={{color:"red"}}>*</div>口令：<Input value={this.state.password} style={{ width: 300 }} onChange={this.onChangePassword} />
+                {RED_STAR}用户名：<Input value={this.state.user_name} style={{ width: 300 }} onChange={this.onChangeUserName} />
+                {RED_STAR}口令：<Input value={this.state.password} style={{ width: 300 }} onChange={this.onChangePassword} />
                 </Space><p /><Space>
-                <div style={{color:"red"}}>*</div>中心 IP 地址：<Input value={this.state.center_ip} style={{ width: 300 }} onChange={this.onChangeCenterIP} />
-                <div style={{color:"red"}}>*</div>中心 API 端口：<InputNumber min={1} max={65535} value={this.state.center_api_port} style={{ width: 100 }} onChange={this.onChangeAPIPort} />
-                <div style={{color:"red"}}>*</div>中心数据端口：<InputNumber min={1} max={65535} value={this.state.center_data_port} style={{ width: 100 }} onChange={this.onChangeDataPort} />
+                {RED_STAR}中心 IP 地址：<Input value={this.state.center_ip} style={{ width: 300 }} onChange={this.onChangeCenterIP} />
+                {RED_STAR}中心 API 端口：<InputNumber min={1} max={65535} value={this.state.center_api_port} style={{ width: 100 }} onChange={this.onChangeAPIPort} />
+                {RED_STAR}中心数据端口：<InputNumber min={1} max={65535} value={this.state.center_data_port} style={{ width: 100 }} onChange={this.onChangeDataPort} />
                 </Space><p /><Space>
                 说明：<TextArea style={{ width: 600 }} value={this.state.explanation} onChange={this.onChangeExplanation} />
                 </Space><p /><Space>
                 预设置节点 ID：<Input value={this.state.preset_node_id} style={{ width: 300 }} onChange={this.onChangePresetNodeID} />
                 </Space><p />
-                <Button type="primary" onClick={this.onSubmitForm}>提交</Button>
+                <Button type="primary" onClick={this.onSubmitForm}>{0===this.state.id ? "添加" : "修改"}</Button>
             </Panel>
             </Collapse>
         )

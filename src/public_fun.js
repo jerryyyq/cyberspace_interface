@@ -2,6 +2,7 @@ const APP_CONFIG = {
     DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
 }
 
+const RED_STAR = (<div style={{color:"red"}}>*</div>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
     console.log("data type is: ", typeof data)
@@ -53,4 +54,4 @@ function string_is_empty(str) {
 }
 
 
-export { APP_CONFIG, yyq_fetch, string_is_empty };
+export { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty };

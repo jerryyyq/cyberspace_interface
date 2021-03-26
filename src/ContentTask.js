@@ -49,9 +49,7 @@ class ContentTask extends React.Component {
                 })
             }, 
             (err_msg) => {
-                this.setState({
-                    err_msg: err_msg
-                })
+                alert("删除失败！err_msg = ", err_msg)
             }
         )
     }
