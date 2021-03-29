@@ -1,29 +1,12 @@
 import React from 'react';
-import { Collapse, Space, Input, Button, Form, InputNumber } from 'antd';
+import { Collapse, Space, Input, Button, InputNumber } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
-import { UpOutlined, UploadOutlined, ContactsFilled } from '@ant-design/icons';
+import { UpOutlined } from '@ant-design/icons';
 
 import './App.css';
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
-
-
-const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 16,
-    },
-  };
-  const tailLayout = {
-    wrapperCol: {
-      offset: 8,
-      span: 16,
-    },
-  };
-
 
 class RemoteAdd extends React.Component {
     constructor(props) {

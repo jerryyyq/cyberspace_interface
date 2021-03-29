@@ -3,7 +3,7 @@ import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import RemoteAdd from './RemoteAdd.js';
-import { CloseCircleOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined, EditOutlined, CaretRightOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -72,6 +72,33 @@ class ContentRemote extends React.Component {
     onEditRemote = (record, e) => {
         console.log("onEditRemote,record = ", record, ", e = ", e)
         this.setState({edit_record:record, add_expand:true})
+    }
+
+    onExecuteInstall = (record, e) => {
+        console.log("onExecuteInstall,record = ", record, ", e = ", e)
+
+        let fetch_data = {"id": record.id, "install_step": record.install_step}
+
+        let url = APP_CONFIG.DOMAIN_URL + "remote_install_execute";
+
+        yyq_fetch(url, 'POST', 
+            (data) => {
+                alert("正在执行远程安装，请稍后刷新列表查看进度")
+                this.setState({
+                    remote_list: data.remote_list.map(function(item){
+                        if (item.id === record.id) {
+                            item["install_state"] = 1
+                        }
+
+                        return item;
+                    }),
+                })
+            }, 
+            (err_msg) => {
+                alert("远程安装失败！err_msg = ", err_msg)
+            },
+            JSON.stringify(fetch_data)
+        )
     }
 
     componentDidMount() {
@@ -155,7 +182,8 @@ class ContentRemote extends React.Component {
                 render: (text, record) => (
                     <Space>
                     <a onClick={e => {this.onDeleteRemote(record.id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
-                    <a onClick={e => {this.onEditRemote(record, e)}}><Tooltip title='修改'><EditOutlined style={{ color: 'green' }} /></Tooltip></a>
+                    <a onClick={e => {this.onEditRemote(record, e)}}><Tooltip title='修改'><EditOutlined style={{ color: 'orange' }} /></Tooltip></a>
+                    <a onClick={e => {this.onExecuteInstall(record, e)}}><Tooltip title='安装'><CaretRightOutlined style={{ color: 'limegreen' }} /></Tooltip></a>
                     </Space>
                 ),
             },

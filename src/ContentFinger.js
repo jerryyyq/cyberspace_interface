@@ -1,7 +1,9 @@
 import React from 'react';
-import { Layout, Table } from 'antd';
+import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import DataDetail from './DataDetail.js';
+import FingerAdd from './FingerAdd.js';
+import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -11,7 +13,8 @@ class ContentFinger extends React.Component {
         this.state = {
             cur_page: 0,
             err_msg: "",
-            finger_list: []
+            finger_list: [],
+            edit_record: null
         };
     }
 
@@ -32,8 +35,30 @@ class ContentFinger extends React.Component {
         )
     }
 
-    handleDeleteTask(event) {
+    onFingerAddChange = (cancel_edit) => {
+        if(cancel_edit) {
+            this.setState({edit_record:null, add_expand:false})
+        } else {
+            this.fetchAllFingerList()
+        }
+    }
 
+    onDeleteFinger = (id, e) => {
+        console.log("onDeleteFinger, id = ", id, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "finger/" + id;
+
+        yyq_fetch(url, 'DELETE', 
+            (data) => {
+                this.setState({
+                    finger_list: this.state.finger_list.filter(function(item) {
+                        return item["id"] !== id;
+                    })
+                })
+            }, 
+            (err_msg) => {
+                alert("删除失败！err_msg = ", err_msg)
+            }
+        )
     }
 
     componentDidMount() {
@@ -49,7 +74,7 @@ class ContentFinger extends React.Component {
                 title: '索引',
                 dataIndex: 'id',
                 key: 'id',
-                render: text => <a href="javascript:void(0)">{text}</a>,
+                render: (text, record) => DataDetail(text, record),
             },
             {
               title: '名称',
@@ -76,7 +101,9 @@ class ContentFinger extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => (
-                    <a onClick={this.handleDeleteTask}> <CloseCircleOutlined style={{ color: 'hotpink' }} /> </a>
+                    <Space>
+                    <a onClick={e => {this.onDeleteFinger(record.id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                    </Space>
                 ),
             },
         ];
@@ -92,8 +119,14 @@ class ContentFinger extends React.Component {
         } else {
             return (
                 <Layout.Content>
-                    <h1>指纹管理</h1>
+                    <h2>指纹管理</h2>
+                    <div className="Content">
+                    <FingerAdd onChange={this.onFingerAddChange} /><br />
+
+                    <Card title="指纹列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllFingerList}/>}>
                     <Table dataSource={this.state.finger_list} columns={columns} />
+                    </Card>
+                    </div>
                 </Layout.Content>
             );
         }
