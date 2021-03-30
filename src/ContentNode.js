@@ -1,8 +1,8 @@
 import React from 'react';
-import { Layout, Table, Tooltip } from 'antd';
+import { Layout, Table, Card, Tooltip } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { CloseCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -16,7 +16,7 @@ class ContentNode extends React.Component {
         };
     }
 
-    fetchAllNodeList() {
+    fetchAllNodeList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "node_list";
 
         yyq_fetch(url, 'GET', 
@@ -140,8 +140,12 @@ class ContentNode extends React.Component {
         } else {
             return (
                 <Layout.Content key="1">
-                    <h1>节点管理</h1>
+                    <h2>节点管理</h2>
+                    <div className="Content">
+                    <Card title="节点列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllNodeList}/>}>
                     <Table dataSource={this.state.node_list} columns={columns} />
+                    </Card>
+                    </div>
                 </Layout.Content>
             );
         }

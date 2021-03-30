@@ -21,7 +21,7 @@ class ContentRemote extends React.Component {
         };
     }
 
-    fetchAllRemoteList() {
+    fetchAllRemoteList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "remote_list";
 
         yyq_fetch(url, 'GET', 

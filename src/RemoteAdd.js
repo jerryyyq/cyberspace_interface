@@ -13,8 +13,6 @@ class RemoteAdd extends React.Component {
         console.log("props = ", props)
         super(props);
 
-        const { old_task } = props;
-
         this.state = {
             err_msg: "",
             id: 0,
@@ -174,7 +172,7 @@ class RemoteAdd extends React.Component {
         return (
             <Collapse accordion activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
-            <Panel header="添加远程机器" key="1">
+            <Panel header={0===this.state.id ? "添加远程机器" : "修改远程机器"} key="1">
                 <Space>
                 {RED_STAR}IP 地址：<Input value={this.state.ip} style={{ width: 300 }} onChange={this.onChangeIP} />
                 {RED_STAR}ssh 端口：<InputNumber min={1} max={65535} value={this.state.ssh_port} style={{ width: 100 }} onChange={this.onChangeSSHPort} />

@@ -3,7 +3,7 @@ import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import FingerAdd from './FingerAdd.js';
-import { CloseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -18,7 +18,7 @@ class ContentFinger extends React.Component {
         };
     }
 
-    fetchAllFingerList() {
+    fetchAllFingerList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "finger_list";
 
         yyq_fetch(url, 'GET', 
@@ -37,7 +37,7 @@ class ContentFinger extends React.Component {
 
     onFingerAddChange = (cancel_edit) => {
         if(cancel_edit) {
-            this.setState({edit_record:null, add_expand:false})
+            this.setState({edit_record:null})
         } else {
             this.fetchAllFingerList()
         }
@@ -59,6 +59,16 @@ class ContentFinger extends React.Component {
                 alert("删除失败！err_msg = ", err_msg)
             }
         )
+    }
+
+    onEditFinger = (record, e) => {
+        console.log("onEditFinger,record = ", record, ", e = ", e)
+        this.setState({edit_record:record})
+    }
+
+    onDownloadFinger = (record, e) => {
+        console.log("onDownloadFinger,record = ", record, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "finger_download/" + record.finger_zip_file;
     }
 
     componentDidMount() {
@@ -103,6 +113,8 @@ class ContentFinger extends React.Component {
                 render: (text, record) => (
                     <Space>
                     <a onClick={e => {this.onDeleteFinger(record.id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                    <a onClick={e => {this.onEditFinger(record, e)}}><Tooltip title='修改'><EditOutlined style={{ color: 'orange' }} /></Tooltip></a>
+                    <a href={APP_CONFIG.DOMAIN_URL + "finger_download/" + record.finger_zip_file}><Tooltip title='下载'><DownloadOutlined style={{ color: 'deepskyblue' }} /></Tooltip></a>
                     </Space>
                 ),
             },
@@ -121,7 +133,7 @@ class ContentFinger extends React.Component {
                 <Layout.Content>
                     <h2>指纹管理</h2>
                     <div className="Content">
-                    <FingerAdd onChange={this.onFingerAddChange} /><br />
+                    <FingerAdd edit_record={this.state.edit_record} onChange={this.onFingerAddChange} /><br />
 
                     <Card title="指纹列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllFingerList}/>}>
                     <Table dataSource={this.state.finger_list} columns={columns} />
