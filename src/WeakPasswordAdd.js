@@ -14,7 +14,7 @@ class WeakPasswordAdd extends React.Component {
 
         this.state = {
             err_msg: "",
-            id: 0,
+            edit_name: "",
             name: "",
             data: {},
             _active_key: ""
@@ -25,16 +25,15 @@ class WeakPasswordAdd extends React.Component {
         console.log("getDerivedStateFromProps nextProps = ", nextProps, ", prevState = ", prevState)
 
         let new_state = null
-        if(nextProps.edit_record) {
-            if (nextProps.edit_record.id !== prevState.id) {
-                new_state = nextProps.edit_record
+        if(nextProps.edit_name) {
+            if (nextProps.edit_name !== prevState.edit_name) {
+                new_state = {edit_name: nextProps.edit_name, name: nextProps.edit_name}
                 new_state["_active_key"] = "1"
-                new_state["upload_files"] = []
+                new_state["data"] = nextProps.edit_data
             } 
-        } else if(0 !== prevState.id) {
-            new_state = {"id": 0}
+        } else if("" !== prevState.edit_name) {
+            new_state = {"edit_name": ""}
             new_state["_active_key"] = ""
-            new_state["upload_files"] = []
         }
 
         console.log("new_state = ", new_state)
@@ -47,7 +46,7 @@ class WeakPasswordAdd extends React.Component {
         if (key === "1") {
             this.setState({ _active_key: key })
         } else {
-            if(this.state.id === 0) {
+            if(this.state.edit_name === "") {
                 this.setState({ _active_key: "" })
             } else {
                 this.props.onChange(true)
@@ -64,6 +63,8 @@ class WeakPasswordAdd extends React.Component {
         if (e.new_value == "error") {
             return false
         }
+
+        this.setState({ data: e.updated_src });
     }
 
     onJsonAdd = (e) => {
@@ -71,33 +72,27 @@ class WeakPasswordAdd extends React.Component {
         if (e.new_value == "error") {
             return false
         }
+
+        this.setState({ data: e.updated_src });
     }
 
     onJsonDelete = (e) => {
         console.log("json delete callback", e)
+        this.setState({ data: e.updated_src });
     }
 
     onSubmitForm = (e) => {
-        let url = APP_CONFIG.DOMAIN_URL + 'upload_finger/' + this.state.id
-        const formData = new FormData();
+        let url = APP_CONFIG.DOMAIN_URL + 'weak_password/' + this.state.name
 
-        if(string_is_empty(this.state.finger_name)){
-            alert("指纹名称不能为空！");
+        if(string_is_empty(this.state.name)){
+            alert("名称不能为空！");
             return;
         }
-        formData.append("finger_name", this.state.finger_name);
 
-        if(1 > this.state.upload_files.length){
-            alert("请选择一个指纹压缩文件！");
+        if (Object.keys(this.state.data).length === 0) {
+            alert("内容不能为空！");
             return;
         }
-        formData.append("upload", this.state.upload_files[0].originFileObj);
-
-        if(this.state.id > 0) {
-            formData.append("finger_id", this.state.id);
-        }
-
-        console.log("formData = ", formData)
 
         yyq_fetch(url, 'POST', 
             data => {
@@ -107,7 +102,7 @@ class WeakPasswordAdd extends React.Component {
             err_msg => {
                 alert("提交失败: " + err_msg);
             }, 
-            formData
+            JSON.stringify(this.state.data)
         )
     }
 
@@ -115,14 +110,14 @@ class WeakPasswordAdd extends React.Component {
         return (
             <Collapse accordion activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
-            <Panel header={0===this.state.id ? "添加弱口令模板" : "修改弱口令模板"} key="1">
+            <Panel header={""===this.state.edit_name ? "添加弱口令模板" : "修改弱口令模板"} key="1">
                 <Space>
                 {RED_STAR}弱口令模板名称：<Input value={this.state.name} style={{ width: 300 }} onChange={this.onChangeWeakPasswordName} />
                 </Space><p /><Space>
                 {RED_STAR}弱口令模板内容：<ReactJson src={this.state.data} displayObjectSize={false} displayDataTypes={false} 
                 onEdit={this.onJsonEdit} onAdd={this.onJsonAdd} onDelete={this.onJsonDelete} />
                 </Space><p /><Space>
-                <Button type="primary" onClick={this.onSubmitForm}>{0===this.state.id ? "添加" : "修改"}</Button>
+                <Button type="primary" onClick={this.onSubmitForm}>{""===this.state.edit_name ? "添加" : "修改"}</Button>
                 </Space>
             </Panel>
             </Collapse>
