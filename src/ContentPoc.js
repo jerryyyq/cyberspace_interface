@@ -1,22 +1,24 @@
 import React from 'react';
-import { Layout, Table } from 'antd';
+import { Layout, Table, Card, Tooltip, Space } from 'antd';
 import { APP_CONFIG, yyq_fetch } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import PocAdd from './PocAdd.js';
+import { CloseCircleOutlined, ReloadOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
-class ContentPOC extends React.Component {
+class ContentPoc extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             cur_page: 0,
             err_msg: "",
-            poc_list: []
+            poc_list: [],
+            edit_record: null
         };
     }
 
-    fetchAllPocList() {
+    fetchAllPocList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "poc_list";
 
         yyq_fetch(url, 'GET', 
@@ -33,8 +35,35 @@ class ContentPOC extends React.Component {
         )
     }
 
-    handleDeleteTask(event) {
+    onPocAddChange = (cancel_edit) => {
+        if(cancel_edit) {
+            this.setState({edit_record:null})
+        } else {
+            this.fetchAllPocList()
+        }
+    }
 
+    onDeletePoc = (name, e) => {
+        console.log("onDeletePOC, name = ", name, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "poc/" + name;
+
+        yyq_fetch(url, 'DELETE', 
+            (data) => {
+                this.setState({
+                    finger_list: this.state.finger_list.filter(function(item) {
+                        return item["name"] !== name;
+                    })
+                })
+            }, 
+            (err_msg) => {
+                alert("删除失败！err_msg = ", err_msg)
+            }
+        )
+    }
+
+    onEditPoc = (record, e) => {
+        console.log("onEditPOC, record = ", record, ", e = ", e)
+        this.setState({edit_record:record})
     }
 
     componentDidMount() {
@@ -81,7 +110,11 @@ class ContentPOC extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => (
-                    <a onClick={this.handleDeleteTask}> <CloseCircleOutlined style={{ color: 'hotpink' }} /> </a>
+                    <Space>
+                    <a onClick={e => {this.onDeletePoc(record.name, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                    <a onClick={e => {this.onEditPoc(record, e)}}><Tooltip title='修改'><EditOutlined style={{ color: 'orange' }} /></Tooltip></a>
+                    <a href={APP_CONFIG.DOMAIN_URL + "poc_download/" + record.name}><Tooltip title='下载'><DownloadOutlined style={{ color: 'deepskyblue' }} /></Tooltip></a>
+                    </Space>
                 ),
             },
         ];
@@ -97,8 +130,14 @@ class ContentPOC extends React.Component {
         } else {
             return (
                 <Layout.Content>
-                    <h1>POC管理</h1>
+                    <h2>POC管理</h2>
+                    <div className="Content">
+                    <PocAdd edit_record={this.state.edit_record} onChange={this.onPocAddChange} /><br />
+
+                    <Card title="POC列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllPocList}/>}>
                     <Table dataSource={this.state.poc_list} columns={columns} />
+                    </Card>
+                    </div>
                 </Layout.Content>
             );
         }
@@ -106,4 +145,4 @@ class ContentPOC extends React.Component {
     }
 }
 
-export default ContentPOC;
+export default ContentPoc;

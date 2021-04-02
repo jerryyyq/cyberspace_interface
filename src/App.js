@@ -7,7 +7,7 @@ import ContentNode from './ContentNode.js'
 import ContentRemote from './ContentRemote.js'
 import ContentFinger from './ContentFinger.js'
 import ContentStrategy from './ContentStrategy.js'
-import ContentPOC from './ContentPOC.js'
+import ContentPoc from './ContentPoc.js'
 
 import './App.css';
 
@@ -25,7 +25,7 @@ class App extends React.Component {
     }
 
     render() {
-        const CONTENT_ITEMS = [ContentTask, ContentNode, ContentRemote, ContentFinger, ContentStrategy, ContentPOC];
+        const CONTENT_ITEMS = [ContentTask, ContentNode, ContentRemote, ContentFinger, ContentStrategy, ContentPoc];
         let CUR_CONTENT = CONTENT_ITEMS[this.state.cur_item]
 
         return (

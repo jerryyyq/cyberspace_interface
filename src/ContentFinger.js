@@ -66,11 +66,6 @@ class ContentFinger extends React.Component {
         this.setState({edit_record:record})
     }
 
-    onDownloadFinger = (record, e) => {
-        console.log("onDownloadFinger, record = ", record, ", e = ", e)
-        let url = APP_CONFIG.DOMAIN_URL + "finger_download/" + record.finger_zip_file;
-    }
-
     componentDidMount() {
         this.fetchAllFingerList() 
     }
