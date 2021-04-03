@@ -50,13 +50,13 @@ class ContentPoc extends React.Component {
         yyq_fetch(url, 'DELETE', 
             (data) => {
                 this.setState({
-                    finger_list: this.state.finger_list.filter(function(item) {
+                    poc_list: this.state.poc_list.filter(function(item) {
                         return item["name"] !== name;
                     })
                 })
             }, 
             (err_msg) => {
-                alert("删除失败！err_msg = ", err_msg)
+                alert("删除失败！err_msg = " + err_msg)
             }
         )
     }
