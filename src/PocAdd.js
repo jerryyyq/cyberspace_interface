@@ -1,11 +1,12 @@
 import React from 'react';
-import { Collapse, Space, Input, Button, Upload } from 'antd';
+import { Collapse, Space, Input, Button, Upload, Checkbox } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
 const { Panel } = Collapse;
+const { TextArea } = Input;
 
 class PocAdd extends React.Component {
     constructor(props) {
@@ -14,9 +15,12 @@ class PocAdd extends React.Component {
         this.state = {
             err_msg: "",
             edit_name: "",
-            name: "",
+            is_set: 0,
+            explanation: "",
+            operator: "",
             upload_files: [],
-            _active_key: ""
+            _active_key: "",
+            _accept_type: ".py"
         };
     }
 
@@ -31,6 +35,7 @@ class PocAdd extends React.Component {
                 new_state["edit_name"] = nextProps.edit_record.name
                 new_state["_active_key"] = "1"
                 new_state["upload_files"] = []
+                new_state["_accept_type"] = nextProps.edit_record.is_set ? ".json" : ".py"
             } 
         } else if("" !== prevState.edit_name) {
             new_state = {"edit_name": ""}
@@ -60,6 +65,23 @@ class PocAdd extends React.Component {
         this.setState({ name: e.target.value })
     }
 
+    onChangeIsSet = (e) => {
+        console.log("e = ", e, ", is_set = ", Number(e.target.checked));
+        this.setState({ 
+            is_set: Number(e.target.checked),
+            _accept_type: e.target.checked ? ".json" : ".py",
+            upload_files : []
+         })
+    }
+
+    onChangeExplanation = (e) => {
+        this.setState({ explanation: e.target.value })
+    }
+
+    onChangePocOperator = (e) => {
+        this.setState({ operator: e.target.value })
+    }
+
     handleBeforeUpload = (file) => {
         return false
     }
@@ -73,24 +95,19 @@ class PocAdd extends React.Component {
     }
 
     onSubmitForm = (e) => {
-        let url = APP_CONFIG.DOMAIN_URL + 'upload_finger/' + this.state.id
+        let url = APP_CONFIG.DOMAIN_URL + 'upload_poc/'
         const formData = new FormData();
 
-        if(string_is_empty(this.state.finger_name)){
-            alert("指纹名称不能为空！");
-            return;
-        }
-        formData.append("finger_name", this.state.finger_name);
+        formData.append("is_set", this.state.is_set);
 
         if(1 > this.state.upload_files.length){
-            alert("请选择一个指纹压缩文件！");
+            alert("请选择一个 POC 文件！");
             return;
         }
         formData.append("upload", this.state.upload_files[0].originFileObj);
 
-        if(this.state.id > 0) {
-            formData.append("finger_id", this.state.id);
-        }
+        formData.append("explanation", this.state.explanation);
+        formData.append("operator", this.state.operator);
 
         console.log("formData = ", formData)
 
@@ -112,10 +129,15 @@ class PocAdd extends React.Component {
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header={""===this.state.edit_name ? "添加POC" : "修改POC"} key="1">
                 <Space>
-                {RED_STAR}POC名称：<Input value={this.state.name} style={{ width: 300 }} onChange={this.onChangePocName} />
+                {RED_STAR}是否 POC 集：<Checkbox checked={this.state.is_set} onChange={this.onChangeIsSet} />
                 </Space><p /><Space>
-                {RED_STAR}<Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
-                            <Button icon={<UploadOutlined />}>选择指纹压缩文件</Button>
+                说明：<TextArea style={{ width: 600 }} value={this.state.explanation} onChange={this.onChangeExplanation} />
+                </Space><p /><Space>
+                POC脚本作者：<Input value={this.state.operator} style={{ width: 300 }} onChange={this.onChangePocOperator} />
+                </Space><p /><Space>
+
+                {RED_STAR}<Upload accept={this.state._accept_type} fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
+                            <Button icon={<UploadOutlined />}>选择 POC 文件</Button>
                         </Upload>
                 </Space><p /><Space>
                 <Button type="primary" onClick={this.onSubmitForm}>{""===this.state.edit_name ? "添加" : "修改"}</Button>

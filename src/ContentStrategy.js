@@ -58,11 +58,11 @@ class ContentStrategy extends React.Component {
     }
 
     onWeakPasswordAddChange = (cancel_edit) => {
-        if(cancel_edit) {
-            this.setState({edit_name: ""})
-        } else {
+        if(!cancel_edit) {
             this.fetchAllWeakPasswordList()
         }
+
+        this.setState({edit_name: ""})
     }
 
     onEditStrategy = (record, e) => {

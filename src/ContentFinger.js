@@ -36,11 +36,11 @@ class ContentFinger extends React.Component {
     }
 
     onFingerAddChange = (cancel_edit) => {
-        if(cancel_edit) {
-            this.setState({edit_record:null})
-        } else {
+        if(!cancel_edit) {
             this.fetchAllFingerList()
         }
+
+        this.setState({edit_record:null})
     }
 
     onDeleteFinger = (id, e) => {

@@ -44,11 +44,11 @@ class ContentRemote extends React.Component {
     }
 
     onRemoteAddChange = (cancel_edit) => {
-        if(cancel_edit) {
-            this.setState({edit_record:null, add_expand:false})
-        } else {
+        if(!cancel_edit) {
             this.fetchAllRemoteList()
         }
+
+        this.setState({edit_record:null, add_expand:false})
     }
 
     onDeleteRemote = (id, e) => {

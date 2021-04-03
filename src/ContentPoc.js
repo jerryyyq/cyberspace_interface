@@ -36,11 +36,11 @@ class ContentPoc extends React.Component {
     }
 
     onPocAddChange = (cancel_edit) => {
-        if(cancel_edit) {
-            this.setState({edit_record:null})
-        } else {
+        if(!cancel_edit) {
             this.fetchAllPocList()
-        }
+        } 
+        
+        this.setState({edit_record:null})
     }
 
     onDeletePoc = (name, e) => {
@@ -85,6 +85,7 @@ class ContentPoc extends React.Component {
               title: '是 POC集',
               dataIndex: 'is_set',
               key: 'is_set',
+              render: (text) => (text == 1 ? "是" : "否")
             },
             {
               title: '说明',
