@@ -128,18 +128,17 @@ class PocAdd extends React.Component {
             <Collapse accordion activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header={""===this.state.edit_name ? "添加POC" : "修改POC"} key="1">
-                <Space>
-                {RED_STAR}是否 POC 集：<Checkbox checked={this.state.is_set} onChange={this.onChangeIsSet} />
-                </Space><p /><Space>
-                说明：<TextArea style={{ width: 600 }} value={this.state.explanation} onChange={this.onChangeExplanation} />
-                </Space><p /><Space>
-                POC脚本作者：<Input value={this.state.operator} style={{ width: 300 }} onChange={this.onChangePocOperator} />
-                </Space><p /><Space>
+                <span className="tag_width">{RED_STAR}是否 POC 集：</span><Checkbox checked={this.state.is_set} onChange={this.onChangeIsSet} />
+                <p/>
+                <span className="tag_width">说明：</span><TextArea className="keep_tag" value={this.state.explanation} onChange={this.onChangeExplanation} />
+                <p/>
+                <span className="tag_width">POC脚本作者：</span><Input value={this.state.operator} className="keep_tag" onChange={this.onChangePocOperator} />
+                <p/>
 
                 {RED_STAR}<Upload accept={this.state._accept_type} fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
                             <Button icon={<UploadOutlined />}>选择 POC 文件</Button>
                         </Upload>
-                </Space><p /><Space>
+                <p /><Space>
                 <Button type="primary" onClick={this.onSubmitForm}>{""===this.state.edit_name ? "添加" : "修改"}</Button>
                 </Space>
             </Panel>

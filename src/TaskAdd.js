@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Space, Input, Select, Tabs, Button, Upload } from 'antd';
+import { Collapse, Space, Input, Select, Tabs, Button, Upload, Row, Col } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -224,23 +224,23 @@ class TaskAdd extends React.Component {
     render() {
         let ATTACH_INPUT;
         if (this.state.scan_type === "3") {
-            ATTACH_INPUT = <Input addonBefore="策略名：" value={this.state.strategy} onChange={this.onChangeStrategy}/>
+            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}策略名：</span><Input className="keep_tag" value={this.state.strategy} onChange={this.onChangeStrategy}/></Col></Row>
         } else if (this.state.scan_type === "4") {
-            ATTACH_INPUT = <Input addonBefore="POC 列表：" value={this.state.poc_name_list} onChange={this.onChangePocName}/>
+            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}POC 列表：</span><Input className="keep_tag" value={this.state.poc_name_list} onChange={this.onChangePocName}/></Col></Row>
         }
 
         return (
             <Collapse defaultActiveKey={['1']} activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header="添加任务" key="1">
-                <p></p><Space>
-                {RED_STAR}任务名称：<Input value={this.state.task_name} style={{ width: 300 }} onChange={this.onChangeTaskName}/>
-                {RED_STAR}优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
+            <Row gutter={[16, 24]}>
+                <Col span={12}><span className="tag_width">{RED_STAR}任务名称：</span><Input className="keep_tag" value={this.state.task_name} onChange={this.onChangeTaskName}/></Col>
+                <Col span={6}>{RED_STAR}优先级：<Select defaultValue={this.state.priority} onChange={this.onChangePriority}>
                     {Array.from(Array(10), (e, i) => {
                         return <Option value={i+1} key={i+1}>{i+1}</Option>
                     })}
-                </Select>
-                {RED_STAR}扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
+                </Select></Col>
+                <Col span={6}>{RED_STAR}扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
                     <Option value="1" key="1">快速探测</Option>
                     <Option value="2" key="21">普通探测</Option>
                     <Option value="3" key="3">弱口令探测</Option>
@@ -248,26 +248,29 @@ class TaskAdd extends React.Component {
                     <Option value="5" key="5">密罐探测</Option>
                     <Option value="6" key="6">工控探测</Option>
                     <Option value="7" key="7">僵网探测</Option>
-                </Select>
-                </Space><p></p>
+                </Select></Col>
+            </Row><p/>
 
-                { ATTACH_INPUT }
+            { ATTACH_INPUT }
 
-                <p></p><Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeIpTabs}>
+            <Row gutter={[16, 124]}><Col span={24}>
+                <Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeIpTabs}>
                     <TabPane tab="输入 IP 列表" key="0">
-                        {RED_STAR}IP 列表：<Input style={{width:"100% - 100"}} value={this.state.ip_list} onChange={this.onChangeIpList}/>
+                    <span className="tag_width">{RED_STAR}IP 列表：</span><Input className="keep_tag" value={this.state.ip_list} onChange={this.onChangeIpList}/>
                     </TabPane>
                     <TabPane tab="上传 IP 列表" key="1">
                         {RED_STAR}<Upload accept=".zip" fileList={this.state.upload_files} beforeUpload={this.handleBeforeUpload} onChange={this.onSelectFile}>
                             <Button icon={<UploadOutlined />}>选择文件</Button>
                         </Upload>
                     </TabPane>
-                </Tabs><p></p>
-                <p></p>
+                </Tabs>
+            </Col></Row>
+            <Row gutter={[16, 124]}><Col span={24}>
                 <Tabs defaultActiveKey={this.state._port_tabs_index} onChange={this.onChangePortTabs}>
                     <TabPane tab="端口列表" key="0">
-                        {RED_STAR}TCP 端口：<Input value={this.state.tport_list}  onChange={this.onChangeTcpPort}/>
-                        UDP 端口：<Input value={this.state.uport_list}  onChange={this.onChangeUdpPort}/>
+                        <span className="tag_width">{RED_STAR}TCP 端口：</span><Input className="keep_tag" value={this.state.tport_list} onChange={this.onChangeTcpPort}/>
+                        <p></p>
+                        <span className="tag_width">UDP 端口：</span><Input className="keep_tag" value={this.state.uport_list} onChange={this.onChangeUdpPort}/>
                     </TabPane>
                     <TabPane tab="端口模板" key="1">
                     {RED_STAR}<Select defaultValue={this.state.template} onChange={this.onChangeTemplate}>
@@ -275,11 +278,13 @@ class TaskAdd extends React.Component {
                             // console.log("e = ", e)
                             return <Option value={e} key={e}>{e}</Option>
                         })}
-                    </Select><p></p>
+                    </Select><p/>
                     {JSON.stringify(this.state['_pt_' + this.state.template])}
                     </TabPane>
                 </Tabs>
-                <p></p>
+            </Col></Row>
+
+
                 <Button type="primary" onClick={this.onSubmitForm}>提交</Button>
             </Panel>
             </Collapse>

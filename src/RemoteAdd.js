@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Space, Input, Button, InputNumber } from 'antd';
+import { Collapse, Space, Input, Button, InputNumber, Row, Col } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined } from '@ant-design/icons';
 
@@ -173,21 +173,30 @@ class RemoteAdd extends React.Component {
             <Collapse accordion activeKey={this.state._active_key} onChange={this.onChangeActiveKey}
                 expandIconPosition="right" expandIcon={({ isActive }) => <UpOutlined rotate={isActive ? 0 : 180} />} >
             <Panel header={0===this.state.id ? "添加远程机器" : "修改远程机器"} key="1">
-                <Space>
-                {RED_STAR}IP 地址：<Input value={this.state.ip} style={{ width: 300 }} onChange={this.onChangeIP} />
-                {RED_STAR}ssh 端口：<InputNumber min={1} max={65535} value={this.state.ssh_port} style={{ width: 100 }} onChange={this.onChangeSSHPort} />
-                </Space><p /><Space>
-                {RED_STAR}用户名：<Input value={this.state.user_name} style={{ width: 300 }} onChange={this.onChangeUserName} />
-                {RED_STAR}口令：<Input value={this.state.password} style={{ width: 300 }} onChange={this.onChangePassword} />
-                </Space><p /><Space>
-                {RED_STAR}中心 IP 地址：<Input value={this.state.center_ip} style={{ width: 300 }} onChange={this.onChangeCenterIP} />
-                {RED_STAR}中心 API 端口：<InputNumber min={1} max={65535} value={this.state.center_api_port} style={{ width: 100 }} onChange={this.onChangeAPIPort} />
-                {RED_STAR}中心数据端口：<InputNumber min={1} max={65535} value={this.state.center_data_port} style={{ width: 100 }} onChange={this.onChangeDataPort} />
-                </Space><p /><Space>
-                说明：<TextArea style={{ width: 600 }} value={this.state.explanation} onChange={this.onChangeExplanation} />
-                </Space><p /><Space>
-                预设置节点 ID：<Input value={this.state.preset_node_id} style={{ width: 300 }} onChange={this.onChangePresetNodeID} />
-                </Space><p />
+                <Row gutter={[16, 124]}>
+                    <Col span={12}><span className="tag_width">{RED_STAR}IP 地址：</span><Input value={this.state.ip} className="keep_tag" onChange={this.onChangeIP} /></Col>
+                    <Col span={12}><span className="tag_width">{RED_STAR}ssh 端口：</span><InputNumber min={1} max={65535} value={this.state.ssh_port} onChange={this.onChangeSSHPort} /></Col>
+                </Row><p/>
+
+                <Row gutter={[16, 124]}>
+                    <Col span={12}><span className="tag_width">{RED_STAR}用户名：</span><Input value={this.state.user_name} className="keep_tag" onChange={this.onChangeUserName} /></Col>
+                    <Col span={12}><span className="tag_width">{RED_STAR}口令：</span><Input value={this.state.password} className="keep_tag" onChange={this.onChangePassword} /></Col>
+                </Row><p/>
+
+                <Row gutter={[16, 124]}>
+                    <Col span={12}><span className="tag_width">{RED_STAR}中心 IP 地址：</span><Input value={this.state.center_ip} className="keep_tag" onChange={this.onChangeCenterIP} /></Col>
+                    <Col span={6}><span className="tag_width">{RED_STAR}中心 API 端口：</span><InputNumber min={1} max={65535} value={this.state.center_api_port} onChange={this.onChangeAPIPort} /></Col>
+                    <Col span={6}><span className="tag_width">{RED_STAR}中心数据端口：</span><InputNumber min={1} max={65535} value={this.state.center_data_port} onChange={this.onChangeDataPort} /></Col>
+                </Row><p/>
+
+                <Row gutter={[16, 124]}>
+                    <Col span={24}><span className="tag_width">说明：</span><TextArea className="keep_tag" value={this.state.explanation} onChange={this.onChangeExplanation} /></Col>
+                </Row><p/>
+
+                <Row gutter={[16, 124]}>
+                    <Col span={12}><span className="tag_width">预设置节点 ID：</span><Input className="keep_tag" value={this.state.preset_node_id} onChange={this.onChangePresetNodeID} /></Col>
+                </Row><p/>
+
                 <Button type="primary" onClick={this.onSubmitForm}>{0===this.state.id ? "添加" : "修改"}</Button>
             </Panel>
             </Collapse>

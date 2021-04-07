@@ -1,8 +1,10 @@
+import './App.css';
+
 const APP_CONFIG = {
     DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
 }
 
-const RED_STAR = (<div style={{color:"red"}}>*</div>)
+const RED_STAR = (<span style={{color:"red"}}>*</span>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
     console.log("data type is: ", typeof data)
