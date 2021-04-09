@@ -2,6 +2,7 @@ import './App.css';
 
 const APP_CONFIG = {
     DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
+    // DOMAIN_URL: "/cloud_nmap_api/",
 }
 
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
@@ -55,5 +56,18 @@ function string_is_empty(str) {
     return false;
 }
 
+function get_local_stroage_value(key_name, default_value = null) {
+    if(localStorage.hasOwnProperty(key_name)) {
+        let value = localStorage.getItem(key_name);
+        console.log("local storage " + key_name + " get value = ", value);
+        return JSON.parse(value);
+    } else {
+        return default_value;
+    }
+}
 
-export { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty };
+function set_local_stroage_value(key_name, value) {
+    return localStorage.setItem(key_name, JSON.stringify(value));
+}
+
+export { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty, get_local_stroage_value, set_local_stroage_value };

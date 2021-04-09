@@ -1,11 +1,14 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip, Space } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import JsonDetail from './JsonDetail.js';
 import WeakPasswordAdd from './WeakPasswordAdd.js';
 import { ReloadOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const KEY_NAME_WEAK_PASSWORD_LIST = "_ls_weak_password_list"
+const KEY_NAME_WEAK_PASSWORD = "_ls_weak_password_"
 
 class ContentStrategy extends React.Component {
     constructor(props) {
@@ -31,6 +34,8 @@ class ContentStrategy extends React.Component {
                     console.log("item = ", item)
                     this.fetchOneWeakPasswordInfo(item.name)
                 })
+
+                set_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST, data.weak_password_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -48,6 +53,8 @@ class ContentStrategy extends React.Component {
             this.setState({
                 ['_wp_' + name]: data[name]
             })
+
+            set_local_stroage_value(KEY_NAME_WEAK_PASSWORD + name, data[name])
         }, 
         (err_msg) => {
             console.log("fetchOneWeakPasswordInfo(" + name + "), err_msg = ", err_msg)
@@ -71,7 +78,23 @@ class ContentStrategy extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllWeakPasswordList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST)
+        if(ls_value === null) {
+            this.fetchAllWeakPasswordList()
+        } else {
+            this.setState({weak_password_list: ls_value})
+
+            Array.from(ls_value, (item, i) => {
+                ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD + item.name)
+                if(ls_value === null) {
+                    this.fetchOneWeakPasswordInfo(item.name)
+                } else {
+                    this.setState({
+                        ['_wp_' + item.name]: ls_value
+                    })
+                }
+            })
+        }
     }
   
     componentWillUnmount() {

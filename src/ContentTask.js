@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip, Space } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
 import { CloseCircleOutlined, ReloadOutlined, ProfileOutlined } from '@ant-design/icons';
@@ -9,13 +9,19 @@ import './App.css';
 
 const { Content } = Layout;
 
+const KEY_NAME_TASK_LIST = "_ls_task_list"
+const KEY_NAME_WEAK_PASSWORD_LIST = "_ls_weak_password_list"
+const KEY_NAME_POC_LIST = "_ls_poc_list"
+
 class ContentTask extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             cur_page: 0,
             err_msg: "",
-            task_list: []
+            task_list: [],
+            weak_password_list: [],
+            poc_list: []
         };
     }
 
@@ -27,6 +33,46 @@ class ContentTask extends React.Component {
                 this.setState({
                     task_list: data.task_list
                 })
+
+                set_local_stroage_value(KEY_NAME_TASK_LIST, data.task_list)
+            }, 
+            (err_msg) => {
+                this.setState({
+                    err_msg: err_msg
+                })
+            }
+        )
+    }
+
+    fetchAllWeakPasswordList = () => {
+        let url = APP_CONFIG.DOMAIN_URL + "weak_password_list";
+
+        yyq_fetch(url, 'GET', 
+            (data) => {
+                this.setState({
+                    weak_password_list: data.weak_password_list
+                })
+
+                set_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST, data.weak_password_list)
+            }, 
+            (err_msg) => {
+                this.setState({
+                    err_msg: err_msg
+                })
+            }
+        )
+    }
+
+    fetchAllPocList = () => {
+        let url = APP_CONFIG.DOMAIN_URL + "poc_list";
+
+        yyq_fetch(url, 'GET', 
+            (data) => {
+                this.setState({
+                    poc_list: data.poc_list
+                })
+
+                set_local_stroage_value(KEY_NAME_POC_LIST, data.poc_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -42,11 +88,15 @@ class ContentTask extends React.Component {
 
         yyq_fetch(url, 'DELETE', 
             (data) => {
-                this.setState({
-                    task_list: this.state.task_list.filter(function(item) {
-                        return item["task_id"] !== task_id;
-                    })
+                let new_task_list = this.state.task_list.filter(function(item) {
+                    return item["task_id"] !== task_id;
                 })
+
+                this.setState({
+                    task_list: new_task_list
+                })
+
+                set_local_stroage_value(KEY_NAME_TASK_LIST, new_task_list)
             }, 
             (err_msg) => {
                 alert("删除失败！err_msg = " + err_msg)
@@ -59,7 +109,26 @@ class ContentTask extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllTaskList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_TASK_LIST)
+        if(ls_value === null) {
+            this.fetchAllTaskList()
+        } else {
+            this.setState({task_list: ls_value})
+        }
+
+        ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST)
+        if(ls_value === null) {
+            this.fetchAllWeakPasswordList()
+        } else {
+            this.setState({weak_password_list: ls_value})
+        }
+
+        ls_value = get_local_stroage_value(KEY_NAME_POC_LIST)
+        if(ls_value === null) {
+            this.fetchAllPocList()
+        } else {
+            this.setState({poc_list: ls_value})
+        }
     }
   
     componentWillUnmount() {
@@ -145,7 +214,7 @@ class ContentTask extends React.Component {
                 <Content>
                     <h2>任务管理</h2>
                     <div className="Content">
-                    <TaskAdd refresh_list={this.fetchAllTaskList} /><br />
+                    <TaskAdd refresh_list={this.fetchAllTaskList} strategy={this.state.weak_password_list} poc={this.state.poc_list} /><br />
 
                     <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllTaskList}/>}>
                     <Table dataSource={this.state.task_list} columns={columns} />

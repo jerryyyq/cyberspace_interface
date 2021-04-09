@@ -1,10 +1,12 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import { CloseCircleOutlined, CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const KEY_NAME_NODE_LIST = "_ls_node_list"
 
 class ContentNode extends React.Component {
     constructor(props) {
@@ -24,6 +26,8 @@ class ContentNode extends React.Component {
                 this.setState({
                     node_list: data.node_list
                 })
+
+                set_local_stroage_value(KEY_NAME_NODE_LIST, data.node_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -39,13 +43,17 @@ class ContentNode extends React.Component {
 
         yyq_fetch(url, 'PUT', 
             (data) => {
-                this.setState({
-                    task_list: this.state.node_list.map(function(item) {
-                        if (item["node_id"] === node_id)
-                            item["enable"] = enable 
-                        return item;
-                    })
+                let new_node_list = this.state.node_list.map(function(item) {
+                    if (item["node_id"] === node_id)
+                        item["enable"] = enable 
+                    return item;
                 })
+
+                this.setState({
+                    node_list: new_node_list
+                })
+
+                set_local_stroage_value(KEY_NAME_NODE_LIST, new_node_list)
             }, 
             (err_msg) => {
                 alert(err_msg)
@@ -55,7 +63,12 @@ class ContentNode extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllNodeList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_NODE_LIST)
+        if(ls_value === null) {
+            this.fetchAllNodeList()
+        } else {
+            this.setState({node_list: ls_value})
+        }
     }
   
     componentWillUnmount() {

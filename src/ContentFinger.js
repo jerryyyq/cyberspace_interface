@@ -1,11 +1,13 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip, Space } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import FingerAdd from './FingerAdd.js';
 import { CloseCircleOutlined, ReloadOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const KEY_NAME_FINGER_LIST = "_ls_finger_list"
 
 class ContentFinger extends React.Component {
     constructor(props) {
@@ -26,6 +28,8 @@ class ContentFinger extends React.Component {
                 this.setState({
                     finger_list: data.finger_list
                 })
+
+                set_local_stroage_value(KEY_NAME_FINGER_LIST, data.finger_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -49,11 +53,15 @@ class ContentFinger extends React.Component {
 
         yyq_fetch(url, 'DELETE', 
             (data) => {
-                this.setState({
-                    finger_list: this.state.finger_list.filter(function(item) {
-                        return item["id"] !== id;
-                    })
+                let new_finger_list = this.state.finger_list.filter(function(item) {
+                    return item["id"] !== id;
                 })
+
+                this.setState({
+                    finger_list: new_finger_list
+                })
+
+                set_local_stroage_value(KEY_NAME_FINGER_LIST, new_finger_list)
             }, 
             (err_msg) => {
                 alert("删除失败！err_msg = " + err_msg)
@@ -67,7 +75,12 @@ class ContentFinger extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllFingerList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_FINGER_LIST)
+        if(ls_value === null) {
+            this.fetchAllFingerList()
+        } else {
+            this.setState({finger_list: ls_value})
+        }
     }
   
     componentWillUnmount() {

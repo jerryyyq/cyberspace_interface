@@ -1,11 +1,13 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip, Space } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import PocAdd from './PocAdd.js';
 import { CloseCircleOutlined, ReloadOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import './App.css';
+
+const KEY_NAME_POC_LIST = "_ls_poc_list"
 
 class ContentPoc extends React.Component {
     constructor(props) {
@@ -26,6 +28,8 @@ class ContentPoc extends React.Component {
                 this.setState({
                     poc_list: data.poc_list
                 })
+
+                set_local_stroage_value(KEY_NAME_POC_LIST, data.poc_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -49,11 +53,15 @@ class ContentPoc extends React.Component {
 
         yyq_fetch(url, 'DELETE', 
             (data) => {
-                this.setState({
-                    poc_list: this.state.poc_list.filter(function(item) {
-                        return item["name"] !== name;
-                    })
+                let new_poc_list = this.state.poc_list.filter(function(item) {
+                    return item["name"] !== name;
                 })
+
+                this.setState({
+                    poc_list: new_poc_list
+                })
+
+                set_local_stroage_value(KEY_NAME_POC_LIST, new_poc_list)
             }, 
             (err_msg) => {
                 alert("删除失败！err_msg = " + err_msg)
@@ -67,7 +75,12 @@ class ContentPoc extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllPocList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_POC_LIST)
+        if(ls_value === null) {
+            this.fetchAllPocList()
+        } else {
+            this.setState({poc_list: ls_value})
+        }
     }
   
     componentWillUnmount() {

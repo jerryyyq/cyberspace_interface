@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Table, Card, Tooltip, Space } from 'antd';
-import { APP_CONFIG, yyq_fetch } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import RemoteAdd from './RemoteAdd.js';
 import { CloseCircleOutlined, ReloadOutlined, EditOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -8,6 +8,8 @@ import { CloseCircleOutlined, ReloadOutlined, EditOutlined, CaretRightOutlined }
 import './App.css';
 
 const { Content } = Layout;
+
+const KEY_NAME_REMOTE_LIST = "_ls_remote_list"
 
 class ContentRemote extends React.Component {
     constructor(props) {
@@ -26,14 +28,18 @@ class ContentRemote extends React.Component {
 
         yyq_fetch(url, 'GET', 
             (data) => {
+                let new_remote_list = data.remote_list.map(function(item){
+                    item["password"] = window.atob(item["password"]) 
+                    return item;
+                })
+
                 this.setState({
-                    remote_list: data.remote_list.map(function(item){
-                        item["password"] = window.atob(item["password"]) 
-                        return item;
-                    }),
+                    remote_list: new_remote_list,
                     edit_record: null,
                     add_expand: false
                 })
+
+                set_local_stroage_value(KEY_NAME_REMOTE_LIST, new_remote_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -57,11 +63,15 @@ class ContentRemote extends React.Component {
 
         yyq_fetch(url, 'DELETE', 
             (data) => {
-                this.setState({
-                    remote_list: this.state.remote_list.filter(function(item) {
-                        return item["id"] !== id;
-                    })
+                let new_remote_list = this.state.remote_list.filter(function(item) {
+                    return item["id"] !== id;
                 })
+
+                this.setState({
+                    remote_list: new_remote_list
+                })
+
+                set_local_stroage_value(KEY_NAME_REMOTE_LIST, new_remote_list)
             }, 
             (err_msg) => {
                 alert("删除失败！err_msg = " + err_msg)
@@ -84,15 +94,19 @@ class ContentRemote extends React.Component {
         yyq_fetch(url, 'POST', 
             (data) => {
                 alert("正在执行远程安装，请稍后刷新列表查看进度")
-                this.setState({
-                    remote_list: data.remote_list.map(function(item){
-                        if (item.id === record.id) {
-                            item["install_state"] = 1
-                        }
+                let new_remote_list = data.remote_list.map(function(item){
+                    if (item.id === record.id) {
+                        item["install_state"] = 1
+                    }
 
-                        return item;
-                    }),
+                    return item;
                 })
+
+                this.setState({
+                    remote_list: new_remote_list
+                })
+
+                set_local_stroage_value(KEY_NAME_REMOTE_LIST, new_remote_list)
             }, 
             (err_msg) => {
                 alert("远程安装失败！err_msg = " + err_msg)
@@ -102,7 +116,12 @@ class ContentRemote extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchAllRemoteList() 
+        let ls_value = get_local_stroage_value(KEY_NAME_REMOTE_LIST)
+        if(ls_value === null) {
+            this.fetchAllRemoteList()
+        } else {
+            this.setState({remote_list: ls_value})
+        }
     }
   
     componentWillUnmount() {

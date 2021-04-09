@@ -13,8 +13,6 @@ class TaskAdd extends React.Component {
     constructor(props) {
         super(props);
 
-        const { old_task } = props;
-
         this.state = {
             err_msg: "",
             task_name: "",
@@ -31,8 +29,13 @@ class TaskAdd extends React.Component {
             _ip_tabs_index: "0",
             _port_tabs_index: "0",
             template_list: [],
-            upload_files: []
+            upload_files: [],
+            weak_password_list: props.strategy,
+            poc_list: props.poc
         };
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
     }
 
     onChangeTaskName = (e) => {
