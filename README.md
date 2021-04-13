@@ -78,3 +78,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ## my add component
 npm install --save react-json-view
+npm install --save memoize-one

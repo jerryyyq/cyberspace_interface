@@ -1,5 +1,6 @@
 import React from 'react';
-import { Collapse, Space, Input, Select, Tabs, Button, Upload, Row, Col } from 'antd';
+import memoize from "memoize-one";
+import { Collapse, Radio, Input, Select, Tabs, Button, Upload, Row, Col } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -12,14 +13,15 @@ const { TabPane } = Tabs;
 class TaskAdd extends React.Component {
     constructor(props) {
         super(props);
+        console.log("props.strategy = ", props.strategy, ", props.poc = ", props.poc)
 
         this.state = {
             err_msg: "",
             task_name: "",
             priority: 1,
             scan_type: "2",
-            strategy: "default",
-            poc_name_list: "all",
+            strategy: "",
+            poc_name_list: ["all"],
             template: "top10",
             ip_list: "",
             tport_list: "",
@@ -30,13 +32,27 @@ class TaskAdd extends React.Component {
             _port_tabs_index: "0",
             template_list: [],
             upload_files: [],
-            weak_password_list: props.strategy,
-            poc_list: props.poc
         };
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-    }
+    get_default_strategy = memoize(
+        (strategy_list, strategy) => {
+            let strategy_value = this.state.strategy
+            if(strategy === "") {
+                if(strategy_list.length > 0) {
+                    return strategy_list[0].name
+                }
+            } else {
+                if(strategy_list.length > 0) {
+                    if(0 > strategy_list.findIndex(item => item.name === strategy)) {
+                        return strategy_list[0].name
+                    }
+                }
+            }
+
+            return strategy
+        }
+    );
 
     onChangeTaskName = (e) => {
         // console.log("e = ", e, ", value = ", e.target.value)
@@ -52,11 +68,19 @@ class TaskAdd extends React.Component {
     }
 
     onChangeStrategy = (e) => {
+        console.log("e.target.value = ", e.target.value);
         this.setState({ strategy: e.target.value })
     }
 
-    onChangePocName = (e) => {
-        this.setState({ poc_name_list: e.target.value })
+    onChangePocName = (value) => {
+        console.log("onChangePocName value = ", value);
+        if(value.includes("all")) {
+            value = ["all"]
+            console.log("onChangePocName find 'all', value = ", value);
+
+        }
+
+        this.setState({ poc_name_list: value })
     }
 
     onChangeActiveKey = (key) => {
@@ -145,7 +169,7 @@ class TaskAdd extends React.Component {
             }
             formData.append("strategy", this.state.strategy);
         } else if (this.state.scan_type === "4") {
-            if(string_is_empty(this.state.poc_name_list)){
+            if(1 > this.state.poc_name_list.length){
                 alert("POC 列表不能为空！");
                 return;
             }
@@ -226,10 +250,29 @@ class TaskAdd extends React.Component {
 
     render() {
         let ATTACH_INPUT;
+
+        const default_strategy = this.get_default_strategy(this.props.strategy, this.state.strategy);
+
         if (this.state.scan_type === "3") {
-            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}策略名：</span><Input className="keep_tag" value={this.state.strategy} onChange={this.onChangeStrategy}/></Col></Row>
+            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}策略名：</span>
+            
+            <Radio.Group onChange={this.onChangeStrategy} value={default_strategy}>
+            {Array.from(this.props.strategy, (e, i) => {
+                return <Radio value={e.name} key={i}>{e.name}</Radio>
+            })}
+            </Radio.Group>
+
+            </Col></Row>
         } else if (this.state.scan_type === "4") {
-            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}POC 列表：</span><Input className="keep_tag" value={this.state.poc_name_list} onChange={this.onChangePocName}/></Col></Row>
+            ATTACH_INPUT = <Row gutter={[16, 124]}><Col span={24}><span className="tag_width">{RED_STAR}POC 列表：</span>
+
+            <Select mode="multiple" allowClear className="keep_tag" value={this.state.poc_name_list} onChange={this.onChangePocName}>
+            {Array.from(this.props.poc, (e, i) => {
+                return <Option key={e.name}>{e.name}</Option>
+            })}
+            </Select>
+            
+            </Col></Row>
         }
 
         return (
@@ -245,7 +288,7 @@ class TaskAdd extends React.Component {
                 </Select></Col>
                 <Col span={6}>{RED_STAR}扫描类型：<Select defaultValue={this.state.scan_type} onChange={this.onChangeScanType}>
                     <Option value="1" key="1">快速探测</Option>
-                    <Option value="2" key="21">普通探测</Option>
+                    <Option value="2" key="2">普通探测</Option>
                     <Option value="3" key="3">弱口令探测</Option>
                     <Option value="4" key="4">POC探测</Option>
                     <Option value="5" key="5">密罐探测</Option>

@@ -25,6 +25,14 @@ class ContentTask extends React.Component {
         };
     }
 
+    reloadAllList = () => {
+        this.fetchAllWeakPasswordList()
+
+        this.fetchAllPocList()
+
+        this.fetchAllTaskList()
+    }
+
     fetchAllTaskList = () => {
         let url = APP_CONFIG.DOMAIN_URL + "task_list";
 
@@ -35,6 +43,36 @@ class ContentTask extends React.Component {
                 })
 
                 set_local_stroage_value(KEY_NAME_TASK_LIST, data.task_list)
+
+                for(let i = 0; i < data.task_list.length; i++) {
+                    if(data.task_list[i].scan_type === "4") {
+                        this.fetchOneTaskPocList(data.task_list[i].task_id)
+                    }
+                }
+            }, 
+            (err_msg) => {
+                this.setState({
+                    err_msg: err_msg
+                })
+            }
+        )
+    }
+
+    fetchOneTaskPocList = (task_id) => {
+        let url = APP_CONFIG.DOMAIN_URL + "task_poc/" + task_id;
+
+        yyq_fetch(url, 'GET', 
+            (data) => {
+                let index = this.state.task_list.findIndex(item => item.task_id == task_id)
+                if(-1 < index) {
+                    this.state.task_list[index].poc_name_list = data.poc_name_list
+                }
+
+                this.setState({
+                    task_list: this.state.task_list
+                })
+
+                set_local_stroage_value(KEY_NAME_TASK_LIST, this.state.task_list)
             }, 
             (err_msg) => {
                 this.setState({
@@ -109,14 +147,7 @@ class ContentTask extends React.Component {
     }
 
     componentDidMount() {
-        let ls_value = get_local_stroage_value(KEY_NAME_TASK_LIST)
-        if(ls_value === null) {
-            this.fetchAllTaskList()
-        } else {
-            this.setState({task_list: ls_value})
-        }
-
-        ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST)
+        let ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD_LIST)
         if(ls_value === null) {
             this.fetchAllWeakPasswordList()
         } else {
@@ -128,6 +159,13 @@ class ContentTask extends React.Component {
             this.fetchAllPocList()
         } else {
             this.setState({poc_list: ls_value})
+        }
+
+        ls_value = get_local_stroage_value(KEY_NAME_TASK_LIST)
+        if(ls_value === null) {
+            this.fetchAllTaskList()
+        } else {
+            this.setState({task_list: ls_value})
         }
     }
   
@@ -200,7 +238,9 @@ class ContentTask extends React.Component {
             },
         ];
 
-        // alert(this.state.task_list);
+        let poc_set = [{name:"all", is_set:1}].concat(this.state.poc_list.filter(function(item) {
+            return item["is_set"] === 1;
+        }))
 
         if(this.state.err_msg !== "") {
             return (
@@ -214,9 +254,9 @@ class ContentTask extends React.Component {
                 <Content>
                     <h2>任务管理</h2>
                     <div className="Content">
-                    <TaskAdd refresh_list={this.fetchAllTaskList} strategy={this.state.weak_password_list} poc={this.state.poc_list} /><br />
+                    <TaskAdd refresh_list={this.fetchAllTaskList} strategy={this.state.weak_password_list} poc={poc_set} /><br />
 
-                    <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.fetchAllTaskList}/>}>
+                    <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.reloadAllList}/>}>
                     <Table dataSource={this.state.task_list} columns={columns} />
                     </Card>
                     </div>
