@@ -1,8 +1,9 @@
 import React from 'react';
-import { Layout, Table, Card, Tooltip, Space } from 'antd';
+import { Layout, Table, Card, Tooltip, Space, PageHeader, Row, Col } from 'antd';
 import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
+import ShowResult from './ShowResult.js';
 import { CloseCircleOutlined, ReloadOutlined, ProfileOutlined } from '@ant-design/icons';
 
 import './App.css';
@@ -21,7 +22,8 @@ class ContentTask extends React.Component {
             err_msg: "",
             task_list: [],
             weak_password_list: [],
-            poc_list: []
+            poc_list: [],
+            show_result: null
         };
     }
 
@@ -142,8 +144,14 @@ class ContentTask extends React.Component {
         )
     }
 
-    onShowResult = (task_id, e) => {
-        console.log("onShowResult, task_id = ", task_id)
+    onShowResult = (task, e) => {
+        console.log("onShowResult, task = ", task)
+
+        this.setState({show_result: task})
+    }
+
+    onBackTaskList = () => {
+        this.setState({show_result: null})
     }
 
     componentDidMount() {
@@ -173,9 +181,6 @@ class ContentTask extends React.Component {
     }
 
     render() {
-        let SHOW_RESULT
-
-
         const columns = [
             {
                 title: '任务 ID',
@@ -222,11 +227,13 @@ class ContentTask extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => {
-                    if (2 === record.data_state) {
+                    if (0 === record.data_state) {
                         return (
                             <Space>
                             <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
-                            <a onClick={e => {this.onShowResult(record.task_id, e)}}><Tooltip title='查看结果'><ProfileOutlined style={{ color: 'green' }} /></Tooltip></a>
+                            <a onClick={e => {this.onShowResult(record, e)}}>
+                                <Tooltip title='查看结果'><ProfileOutlined style={{ color: 'green' }} /></Tooltip>
+                            </a>
                             </Space>
                         )
                     } else {
@@ -249,6 +256,17 @@ class ContentTask extends React.Component {
                     {this.state.err_msg}
                 </Content>
             );
+        } else if(this.state.show_result !== null) {
+            return (
+                <Content>
+                    <PageHeader className="site-page-header" onBack={this.onBackTaskList} title=" 扫描结果" subTitle={"任务 ID：" + this.state.show_result.task_id} />
+                    <Row>
+                    <Col flex="16px">&nbsp;</Col>
+                    <Col flex="auto"><ShowResult task={this.state.show_result} /></Col>
+                    <Col flex="16px">&nbsp;</Col>
+                    </Row>
+                </Content>
+            )
         } else {
             return (
                 <Content>
