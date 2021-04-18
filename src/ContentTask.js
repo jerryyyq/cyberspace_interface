@@ -227,7 +227,7 @@ class ContentTask extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => {
-                    if (0 === record.data_state) {
+                    if (2 === record.data_state) {
                         return (
                             <Space>
                             <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>

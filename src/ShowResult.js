@@ -25,13 +25,14 @@ class ShowResult extends React.Component {
     }
 
     fetchAllScanResultList = () => {
-        console.log("window.location = ", window.location)
-        let RESULT_URL = window.location.protocol + "://" + window.location.hostname + ":29090/cloud_receive_api/scan_result/"
+        console.log("window.location = ", window.location, ", location.hostname = ", window.location.hostname)
+        let RESULT_URL = window.location.protocol + "//" + window.location.hostname + ":29090/cloud_receive_api/scan_result/"
         let url = RESULT_URL + this.props.task.task_id + "/"
+        console.log("url = ", url)
 
         for(let i = 0; i < this.props.task.ip_group_count; i++) {
             url = url + i
-            console.log("fetchAllScanResultList, url = ", url)
+            // console.log("fetchAllScanResultList, url = ", url)
 
             yyq_fetch(url, 'GET', 
             (data) => {

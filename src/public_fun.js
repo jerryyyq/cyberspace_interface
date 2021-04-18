@@ -1,14 +1,14 @@
 import './App.css';
 
 const APP_CONFIG = {
-    DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
-    // DOMAIN_URL: "/cloud_nmap_api/",
+    // DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
+    DOMAIN_URL: "/cloud_nmap_api/",
 }
 
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
-    console.log("data type is: ", typeof data)
+    console.log("yyq_fetch, data type is: ", typeof data)
     let opt_head = {}
 
     if(typeof data === "object") {
@@ -19,6 +19,8 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
         opt_head = {'Content-Type':content_type}
     }
+
+    // console.log("yyq_fetch, befor call fetch, url = ", url)
 
     fetch(url, {
         method: method,
