@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
 import { yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
+import ResultFind from './ResultFind.js';
 import ReactJson from 'react-json-view'
 
 import './App.css';
@@ -78,9 +79,12 @@ class ShowResult extends React.Component {
         ];
 
         return (
+            <div className="Content">
+            <ResultFind result_list={this.state.result_list} />
+
             <Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeTabs}>
             <TabPane tab={<span style={{fontSize:18}}>总览</span>} key="0">
-                <Table dataSource={this.state.result_list} columns={columns} />
+                <Table pagination={{ pageSize: 50 }} dataSource={this.state.result_list} columns={columns} />
             </TabPane>
 
             <TabPane tab="设备" key="1">
@@ -101,6 +105,7 @@ class ShowResult extends React.Component {
             <TabPane tab="弱口令" key="6">
             </TabPane>
             </Tabs>
+            </div>
         )
     }
 }
