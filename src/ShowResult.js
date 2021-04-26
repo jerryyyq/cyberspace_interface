@@ -64,7 +64,7 @@ class ShowResult extends React.Component {
     }
 
     render() {
-        const columns = [
+        let columns = [
             {
                 title: 'IP',
                 dataIndex: 'ip',
@@ -74,9 +74,37 @@ class ShowResult extends React.Component {
                 title: '数据',
                 dataIndex: 'data',
                 key: 'data',
-                render: (text, record) => <ReactJson src={record} displayObjectSize={false} displayDataTypes={false} />,
+                render: (text, record) => <ReactJson src={record} collapsed={1} displayObjectSize={false} displayDataTypes={false} />,
             },
         ];
+
+        const MACHINE_RENDER = [];
+
+        if(this.state._ip_tabs_index === "1") {
+            let machine_map = new Map();
+            let os_map = new Map();
+
+            let open_port_arr = this.state.result_list.filter((item) => {
+                return item["open_ports_num"] > 0;
+            })
+
+            open_port_arr.forEach((record) => {
+                record["machine_type"].forEach((item) => {
+                    let machine_ips = [];
+                    if(machine_map.has(item["machine_type"])) {
+                        machine_ips = machine_map.get(item["machine_type"])
+                    }
+
+                    machine_ips.push(record["ip"])
+                    machine_map.set(item["machine_type"], machine_ips)
+                })
+            })
+
+            machine_map.forEach((value, key) => {
+                console.log("machine_map: " + key + " = " + value);
+                MACHINE_RENDER.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+            })
+        }
 
         return (
             <div className="Content">
@@ -88,6 +116,9 @@ class ShowResult extends React.Component {
             </TabPane>
 
             <TabPane tab="设备" key="1">
+                <table border="1"><thead><tr><td> 机器类型 </td><td> IP </td></tr></thead><tbody>
+                    {MACHINE_RENDER}
+                </tbody></table>
             </TabPane>
 
             <TabPane tab="开放端口" key="2">
