@@ -78,9 +78,14 @@ class ShowResult extends React.Component {
             },
         ];
 
+        const OPEN_PORT_TCP_REND = [];
+        const OPEN_PORT_UDP_REND = [];
         const MACHINE_RENDER = [];
+        const OS_REND = [];
 
-        if(this.state._ip_tabs_index === "1") {
+        if(parseInt(this.state._ip_tabs_index) > 0) {
+            let open_port_tcp_map = new Map();
+            let open_port_udp_map = new Map();
             let machine_map = new Map();
             let os_map = new Map();
 
@@ -89,6 +94,28 @@ class ShowResult extends React.Component {
             })
 
             open_port_arr.forEach((record) => {
+                // open port
+                record["open_ports"].["tcp"].forEach((value, index) => {
+                    let port_ips = [];
+                    if(open_port_tcp_map.has(value)) {
+                        port_ips = open_port_tcp_map.get(value)
+                    }
+
+                    port_ips.push(record["ip"])
+                    open_port_tcp_map.set(value, port_ips)
+                })
+
+                record["open_ports"].["udp"].forEach((value, index) => {
+                    let port_ips = [];
+                    if(open_port_udp_map.has(value)) {
+                        port_ips = open_port_udp_map.get(value)
+                    }
+
+                    port_ips.push(record["ip"])
+                    open_port_udp_map.set(value, port_ips)
+                })
+
+                // machine type
                 record["machine_type"].forEach((item) => {
                     let machine_ips = [];
                     if(machine_map.has(item["machine_type"])) {
@@ -98,11 +125,41 @@ class ShowResult extends React.Component {
                     machine_ips.push(record["ip"])
                     machine_map.set(item["machine_type"], machine_ips)
                 })
+
+                // os type
+                record["os_type"].forEach((item) => {
+                    let os_ips = [];
+                    if(os_map.has(item["os_type"])) {
+                        os_ips = os_map.get(item["os_type"])
+                    }
+
+                    os_ips.push(record["ip"])
+                    os_map.set(item["os_type"], os_ips)
+                })
             })
 
+            /////////////////////////// render ////////////////////////////
+            // open port
+            open_port_tcp_map.forEach((value, key) => {
+                console.log("open_port_tcp_map: " + key + " = " + value);
+                OPEN_PORT_TCP_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+            })
+
+            open_port_udp_map.forEach((value, key) => {
+                console.log("open_port_udp_map: " + key + " = " + value);
+                OPEN_PORT_UDP_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+            })
+
+            // machine type
             machine_map.forEach((value, key) => {
                 console.log("machine_map: " + key + " = " + value);
                 MACHINE_RENDER.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+            })
+            
+            // os type
+            os_map.forEach((value, key) => {
+                console.log("os_map: " + key + " = " + value);
+                OS_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
             })
         }
 
@@ -115,25 +172,40 @@ class ShowResult extends React.Component {
                 <Table pagination={{ pageSize: 50 }} dataSource={this.state.result_list} columns={columns} />
             </TabPane>
 
-            <TabPane tab="设备" key="1">
+            <TabPane tab="开放端口" key="1">
+                <h3>TCP</h3>
+                <table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
+                    {OPEN_PORT_TCP_REND}
+                </tbody></table>
+
+                <h3>UDP</h3>
+                <table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
+                    {OPEN_PORT_UDP_REND}
+                </tbody></table>
+            </TabPane>
+
+            <TabPane tab="设备" key="2">
                 <table border="1"><thead><tr><td> 机器类型 </td><td> IP </td></tr></thead><tbody>
                     {MACHINE_RENDER}
                 </tbody></table>
             </TabPane>
 
-            <TabPane tab="开放端口" key="2">
+            <TabPane tab="操作系统" key="3">
+                <table border="1"><thead><tr><td> 操作系统 </td><td> IP </td></tr></thead><tbody>
+                    {OS_REND}
+                </tbody></table>
             </TabPane>
 
-            <TabPane tab="漏洞" key="3">
+            <TabPane tab="漏洞" key="4">
             </TabPane>
 
-            <TabPane tab="蜜罐" key="4">
+            <TabPane tab="蜜罐" key="5">
             </TabPane>
 
-            <TabPane tab="僵尸网络" key="5">
+            <TabPane tab="僵尸网络" key="6">
             </TabPane>
 
-            <TabPane tab="弱口令" key="6">
+            <TabPane tab="弱口令" key="7">
             </TabPane>
             </Tabs>
             </div>
