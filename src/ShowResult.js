@@ -51,6 +51,29 @@ class ShowResult extends React.Component {
         }
     }
 
+    mapToObjectList = (map) => {
+        let obj_list = [];
+        map.forEach((value, key) => {
+            console.log("mapToObjectList, value = ", value)
+            let add_obj = {"name": key}
+
+            let ips = ""
+            value.forEach(item => {
+                if("port" in item) {
+                    ips = ips + item["ip"] + ":" + item["port"] + "\n"
+                } else {
+                    ips = ips + item["ip"] + "\n"
+                }
+            })
+            add_obj["ips"] = ips
+            console.log("mapToObjectList, add_obj = ", add_obj)
+
+            obj_list.push(add_obj)
+        })
+
+        return obj_list
+    }
+
     componentDidMount() {
         let ls_value = get_local_stroage_value(KEY_NAME_TASK_RESULT + this.props.task.task_id)
         if(ls_value === null) {
@@ -78,16 +101,35 @@ class ShowResult extends React.Component {
             },
         ];
 
+        let open_port_tcp_map = new Map();
+        let open_port_udp_map = new Map();
+        let machine_map = new Map();
+        let os_map = new Map();
+        let honeypot_map = new Map();
+        let botnet_map = new Map();
+
+        /*
         const OPEN_PORT_TCP_REND = [];
         const OPEN_PORT_UDP_REND = [];
         const MACHINE_RENDER = [];
         const OS_REND = [];
+        */
 
         if(parseInt(this.state._ip_tabs_index) > 0) {
-            let open_port_tcp_map = new Map();
-            let open_port_udp_map = new Map();
-            let machine_map = new Map();
-            let os_map = new Map();
+            const TYPE_TITLE = ["", "端口号", "机器类型", "操作系统", "漏洞名称", "蜜罐类型", "僵尸网络", "弱口令"]
+            columns = [
+                {
+                    title: TYPE_TITLE[parseInt(this.state._ip_tabs_index)],
+                    dataIndex: 'name',
+                    key: 'name',
+                },
+                {
+                    title: 'IP',
+                    dataIndex: 'ips',
+                    key: 'ips',
+                    render: (text, record) => <pre>{text}</pre>,
+                },
+            ];
 
             let open_port_arr = this.state.result_list.filter((item) => {
                 return item["open_ports_num"] > 0;
@@ -101,7 +143,7 @@ class ShowResult extends React.Component {
                         port_ips = open_port_tcp_map.get(value)
                     }
 
-                    port_ips.push(record["ip"])
+                    port_ips.push({"ip": record["ip"]})
                     open_port_tcp_map.set(value, port_ips)
                 })
 
@@ -111,7 +153,7 @@ class ShowResult extends React.Component {
                         port_ips = open_port_udp_map.get(value)
                     }
 
-                    port_ips.push(record["ip"])
+                    port_ips.push({"ip": record["ip"]})
                     open_port_udp_map.set(value, port_ips)
                 })
 
@@ -122,7 +164,7 @@ class ShowResult extends React.Component {
                         machine_ips = machine_map.get(item["machine_type"])
                     }
 
-                    machine_ips.push(record["ip"])
+                    machine_ips.push({"ip": record["ip"]})
                     machine_map.set(item["machine_type"], machine_ips)
                 })
 
@@ -133,34 +175,58 @@ class ShowResult extends React.Component {
                         os_ips = os_map.get(item["os_type"])
                     }
 
-                    os_ips.push(record["ip"])
+                    os_ips.push({"ip": record["ip"]})
                     os_map.set(item["os_type"], os_ips)
+                })
+
+                // honey pot
+                record["honeypot_info"].forEach((item) => {
+                    let os_ips = [];
+                    if(honeypot_map.has(item["honeypot_name"])) {
+                        os_ips = honeypot_map.get(item["honeypot_name"])
+                    }
+
+                    os_ips.push({"ip": record["ip"], "port": item["honeypot_port"]})
+                    honeypot_map.set(item["honeypot_name"], os_ips)
+                })
+
+                // botnet
+                record["botnet_info"].forEach((item) => {
+                    let os_ips = [];
+                    if(botnet_map.has(item["botnet_name"])) {
+                        os_ips = botnet_map.get(item["botnet_name"])
+                    }
+
+                    os_ips.push({"ip": record["ip"], "port": item["botnet_port"]})
+                    botnet_map.set(item["botnet_name"], os_ips)
                 })
             })
 
+            /*
             /////////////////////////// render ////////////////////////////
             // open port
             open_port_tcp_map.forEach((value, key) => {
                 console.log("open_port_tcp_map: " + key + " = " + value);
-                OPEN_PORT_TCP_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+                OPEN_PORT_TCP_REND.push(<tr><td> {key} </td><td> <pre>{value["ips"].join("\n")}</pre> </td></tr>)
             })
 
             open_port_udp_map.forEach((value, key) => {
                 console.log("open_port_udp_map: " + key + " = " + value);
-                OPEN_PORT_UDP_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+                OPEN_PORT_UDP_REND.push(<tr><td> {key} </td><td> <pre>{value["ips"].join("\n")}</pre> </td></tr>)
             })
 
             // machine type
             machine_map.forEach((value, key) => {
                 console.log("machine_map: " + key + " = " + value);
-                MACHINE_RENDER.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+                MACHINE_RENDER.push(<tr><td> {key} </td><td> <pre>{value["ips"].join("\n")}</pre> </td></tr>)
             })
             
             // os type
             os_map.forEach((value, key) => {
                 console.log("os_map: " + key + " = " + value);
-                OS_REND.push(<tr><td> {key} </td><td> <pre>{value.join("\n")}</pre> </td></tr>)
+                OS_REND.push(<tr><td> {key} </td><td> <pre>{value["ips"].join("\n")}</pre> </td></tr>)
             })
+            */
         }
 
         return (
@@ -174,35 +240,42 @@ class ShowResult extends React.Component {
 
             <TabPane tab="开放端口" key="1">
                 <h3>TCP</h3>
-                <table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
+                {/*<table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
                     {OPEN_PORT_TCP_REND}
-                </tbody></table>
+                </tbody></table>*/}
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(open_port_tcp_map)} columns={columns} />
 
                 <h3>UDP</h3>
-                <table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
+                {/*<table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
                     {OPEN_PORT_UDP_REND}
-                </tbody></table>
+                </tbody></table>*/}
+
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(open_port_udp_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="设备" key="2">
-                <table border="1"><thead><tr><td> 机器类型 </td><td> IP </td></tr></thead><tbody>
+                {/*<table border="1"><thead><tr><td> 机器类型 </td><td> IP </td></tr></thead><tbody>
                     {MACHINE_RENDER}
-                </tbody></table>
+                </tbody></table>*/}
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(machine_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="操作系统" key="3">
-                <table border="1"><thead><tr><td> 操作系统 </td><td> IP </td></tr></thead><tbody>
+                {/*<table border="1"><thead><tr><td> 操作系统 </td><td> IP </td></tr></thead><tbody>
                     {OS_REND}
-                </tbody></table>
+                </tbody></table>*/}
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(os_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="漏洞" key="4">
             </TabPane>
 
             <TabPane tab="蜜罐" key="5">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(honeypot_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="僵尸网络" key="6">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(botnet_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="弱口令" key="7">
