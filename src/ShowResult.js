@@ -5,6 +5,7 @@ import ResultFind from './ResultFind.js';
 import ReactJson from 'react-json-view'
 
 import './App.css';
+import { ControlOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
 
@@ -51,10 +52,10 @@ class ShowResult extends React.Component {
         }
     }
 
-    mapToObjectList = (map) => {
+    ipsMapToObjectList = (map) => {
         let obj_list = [];
         map.forEach((value, key) => {
-            console.log("mapToObjectList, value = ", value)
+            console.log("ipsMapToObjectList, value = ", value)
             let add_obj = {"name": key}
 
             let ips = ""
@@ -66,11 +67,35 @@ class ShowResult extends React.Component {
                 }
             })
             add_obj["ips"] = ips
-            console.log("mapToObjectList, add_obj = ", add_obj)
+            console.log("ipsMapToObjectList, add_obj = ", add_obj)
 
             obj_list.push(add_obj)
         })
 
+        return obj_list
+    }
+
+    itemMapToObjectList = (map) => {
+        let obj_list = [];
+        map.forEach((value, key) => {
+            value.forEach((item, index) => {
+                obj_list.push({"name": key, "index": index, "count": value.length, ...item})
+            })
+        })
+
+        console.log("itemMapToObjectList, obj_list = ", obj_list)
+        return obj_list
+    }
+
+    sataboxMapToObjectList = (map) => {
+        let obj_list = [];
+        map.forEach((value, key) => {
+            value["ips"].forEach((item, index) => {
+                obj_list.push({"name": key, "index": index, "count": value["ips"].length, ...value, "ip": item})
+            })
+        })
+
+        console.log("sataboxMapToObjectList, obj_list = ", obj_list)
         return obj_list
     }
 
@@ -89,7 +114,7 @@ class ShowResult extends React.Component {
     render() {
         let columns = [
             {
-                title: 'IP',
+                title: "IP",
                 dataIndex: 'ip',
                 key: 'ip',
             },
@@ -101,12 +126,276 @@ class ShowResult extends React.Component {
             },
         ];
 
+        let columns_exploit = [
+            {
+                title: "漏洞名称",
+                dataIndex: 'name',
+                key: 'name',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: 'IP',
+                dataIndex: 'ip',
+                key: 'ip',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '端口',
+                dataIndex: 'port',
+                key: 'port',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '产品名',
+                dataIndex: 'product_name',
+                key: 'product_name',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '产品版本',
+                dataIndex: 'product_version',
+                key: 'product_version',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '协议',
+                dataIndex: 'protocol_type',
+                key: 'protocol_type',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '口令',
+                dataIndex: 'web_weak_info',
+                key: 'web_weak_info',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '危害级别',
+                dataIndex: 'exp_level',
+                key: 'exp_level',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+        ];
+
+        let columns_satabox = [
+            {
+                title: "漏洞名称",
+                dataIndex: 'name',
+                key: 'name',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "CVE 编号",
+                dataIndex: 'cve_number',
+                key: 'cve_number',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "CNVD 编号",
+                dataIndex: 'cnvd_number',
+                key: 'cnvd_number',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "危害等级",
+                dataIndex: 'danger_level',
+                key: 'danger_level',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "是否 0 DAY",
+                dataIndex: 'is_zero_vul',
+                key: 'is_zero_vul',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "漏洞描述",
+                dataIndex: 'vul_des',
+                key: 'vul_des',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "相关连接",
+                dataIndex: 'related_links',
+                key: 'related_links',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: "补丁地址",
+                dataIndex: 'patch_link',
+                key: 'patch_link',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: 'IP',
+                dataIndex: 'ip',
+                key: 'ip',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+        ];
+
+        let columns_weak = [
+            {
+                title: "服务名",
+                dataIndex: 'name',
+                key: 'name',
+                render: (value, row, index) => {
+                    const obj = {
+                      children: value,
+                      props: {},
+                    };
+
+                    if (row.index === 0) {
+                      obj.props.rowSpan = row["count"];
+                    } else {
+                      obj.props.rowSpan = 0;
+                    }
+                    return obj;
+                },
+            },
+            {
+                title: 'IP',
+                dataIndex: 'ip',
+                key: 'ip',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '端口',
+                dataIndex: 'port',
+                key: 'port',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '用户名',
+                dataIndex: 'username',
+                key: 'username',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+            {
+                title: '口令',
+                dataIndex: 'password',
+                key: 'password',
+                render: (value, row) => <pre>{value}</pre>,
+            },
+        ];        
+
         let open_port_tcp_map = new Map();
         let open_port_udp_map = new Map();
         let machine_map = new Map();
         let os_map = new Map();
         let honeypot_map = new Map();
         let botnet_map = new Map();
+        let weak_map = new Map();
+        let exploit_map = new Map();
+        let satabox_map = new Map();
 
         /*
         const OPEN_PORT_TCP_REND = [];
@@ -115,8 +404,28 @@ class ShowResult extends React.Component {
         const OS_REND = [];
         */
 
-        if(parseInt(this.state._ip_tabs_index) > 0) {
-            const TYPE_TITLE = ["", "端口号", "机器类型", "操作系统", "漏洞名称", "蜜罐类型", "僵尸网络", "弱口令"]
+        if(parseInt(this.state._ip_tabs_index) === 5) {
+            this.state.result_list.forEach((record) => {
+                if(!("satabox_exploit" in record) || record["satabox_exploit"].length < 1) {
+                    return true;
+                }
+
+                console.log("satabox_exploit = ", record["satabox_exploit"])
+                record["satabox_exploit"].forEach((item) => {
+                    let statbox_value = {};
+                    let item_list = [];
+                    if(satabox_map.has(item["vul_name"])) {
+                        statbox_value = satabox_map.get(item["vul_name"])
+                    } else {
+                        statbox_value = {...item, "ips":[]}
+                    }
+    
+                    statbox_value["ips"].push({"ip": record["ip"]})
+                    satabox_map.set(item["vul_name"], statbox_value)
+                })
+            })
+        } else if(parseInt(this.state._ip_tabs_index) > 0) {
+            const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐类型", "僵尸网络", "服务名"]
             columns = [
                 {
                     title: TYPE_TITLE[parseInt(this.state._ip_tabs_index)],
@@ -138,68 +447,96 @@ class ShowResult extends React.Component {
             open_port_arr.forEach((record) => {
                 // open port
                 record["open_ports"].["tcp"].forEach((value, index) => {
-                    let port_ips = [];
+                    let item_list = [];
                     if(open_port_tcp_map.has(value)) {
-                        port_ips = open_port_tcp_map.get(value)
+                        item_list = open_port_tcp_map.get(value)
                     }
 
-                    port_ips.push({"ip": record["ip"]})
-                    open_port_tcp_map.set(value, port_ips)
+                    item_list.push({"ip": record["ip"]})
+                    open_port_tcp_map.set(value, item_list)
                 })
 
                 record["open_ports"].["udp"].forEach((value, index) => {
-                    let port_ips = [];
+                    let item_list = [];
                     if(open_port_udp_map.has(value)) {
-                        port_ips = open_port_udp_map.get(value)
+                        item_list = open_port_udp_map.get(value)
                     }
 
-                    port_ips.push({"ip": record["ip"]})
-                    open_port_udp_map.set(value, port_ips)
+                    item_list.push({"ip": record["ip"]})
+                    open_port_udp_map.set(value, item_list)
                 })
 
                 // machine type
                 record["machine_type"].forEach((item) => {
-                    let machine_ips = [];
+                    let item_list = [];
                     if(machine_map.has(item["machine_type"])) {
-                        machine_ips = machine_map.get(item["machine_type"])
+                        item_list = machine_map.get(item["machine_type"])
                     }
 
-                    machine_ips.push({"ip": record["ip"]})
-                    machine_map.set(item["machine_type"], machine_ips)
+                    item_list.push({"ip": record["ip"]})
+                    machine_map.set(item["machine_type"], item_list)
                 })
 
                 // os type
                 record["os_type"].forEach((item) => {
-                    let os_ips = [];
+                    let item_list = [];
                     if(os_map.has(item["os_type"])) {
-                        os_ips = os_map.get(item["os_type"])
+                        item_list = os_map.get(item["os_type"])
                     }
 
-                    os_ips.push({"ip": record["ip"]})
-                    os_map.set(item["os_type"], os_ips)
+                    item_list.push({"ip": record["ip"]})
+                    os_map.set(item["os_type"], item_list)
+                })
+
+                // exploit
+                record["exploit_info"].forEach((item) => {
+                    let item_list = [];
+                    if(exploit_map.has(item["poc_info"])) {
+                        item_list = exploit_map.get(item["poc_info"])
+                    }
+
+                    item_list.push({"ip": record["ip"], "port": item["port"], 
+                        "product_name": item["product_name"], "product_version": item["product_version"],
+                        "protocol_type": item["protocol_type"], "web_weak_info": item["web_weak_info"], "exp_level": item["exp_level"],
+                    })
+                    exploit_map.set(item["poc_info"], item_list)
                 })
 
                 // honey pot
                 record["honeypot_info"].forEach((item) => {
-                    let os_ips = [];
+                    let item_list = [];
                     if(honeypot_map.has(item["honeypot_name"])) {
-                        os_ips = honeypot_map.get(item["honeypot_name"])
+                        item_list = honeypot_map.get(item["honeypot_name"])
                     }
 
-                    os_ips.push({"ip": record["ip"], "port": item["honeypot_port"]})
-                    honeypot_map.set(item["honeypot_name"], os_ips)
+                    item_list.push({"ip": record["ip"], "port": item["honeypot_port"]})
+                    honeypot_map.set(item["honeypot_name"], item_list)
                 })
 
                 // botnet
                 record["botnet_info"].forEach((item) => {
-                    let os_ips = [];
+                    let item_list = [];
                     if(botnet_map.has(item["botnet_name"])) {
-                        os_ips = botnet_map.get(item["botnet_name"])
+                        item_list = botnet_map.get(item["botnet_name"])
                     }
 
-                    os_ips.push({"ip": record["ip"], "port": item["botnet_port"]})
-                    botnet_map.set(item["botnet_name"], os_ips)
+                    item_list.push({"ip": record["ip"], "port": item["botnet_port"]})
+                    botnet_map.set(item["botnet_name"], item_list)
                 })
+
+                // weak
+                record["weak_info"].forEach((item) => {
+                    let item_list = [];
+                    if(weak_map.has(item["service"])) {
+                        item_list = weak_map.get(item["service"])
+                    }
+
+                    item_list.push({"ip": item["host"], "port": item["port"], "username": item["username"], "password": item["password"]})
+                    weak_map.set(item["service"], item_list)
+                })
+
+                weak_map.set("test1", [{"ip":"1", "port":21, "username":"wo", "password":"p1"},{"ip":"2", "port":21, "username":"wo", "password":"p2"}])
+                weak_map.set("test2", [{"ip":"3", "port":23, "username":"wo", "password":"p3"}])
             })
 
             /*
@@ -243,42 +580,48 @@ class ShowResult extends React.Component {
                 {/*<table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
                     {OPEN_PORT_TCP_REND}
                 </tbody></table>*/}
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(open_port_tcp_map)} columns={columns} />
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(open_port_tcp_map)} columns={columns} />
 
                 <h3>UDP</h3>
                 {/*<table border="1"><thead><tr><td> 端口号 </td><td> IP </td></tr></thead><tbody>
                     {OPEN_PORT_UDP_REND}
                 </tbody></table>*/}
 
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(open_port_udp_map)} columns={columns} />
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(open_port_udp_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="设备" key="2">
                 {/*<table border="1"><thead><tr><td> 机器类型 </td><td> IP </td></tr></thead><tbody>
                     {MACHINE_RENDER}
                 </tbody></table>*/}
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(machine_map)} columns={columns} />
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(machine_map)} columns={columns} />
             </TabPane>
 
             <TabPane tab="操作系统" key="3">
                 {/*<table border="1"><thead><tr><td> 操作系统 </td><td> IP </td></tr></thead><tbody>
                     {OS_REND}
                 </tbody></table>*/}
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(os_map)} columns={columns} />
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(os_map)} columns={columns} />
             </TabPane>
 
-            <TabPane tab="漏洞" key="4">
+            <TabPane tab="扫描漏洞" key="4">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.itemMapToObjectList(exploit_map)} columns={columns_exploit} />
             </TabPane>
 
-            <TabPane tab="蜜罐" key="5">
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(honeypot_map)} columns={columns} />
+            <TabPane tab="系统漏洞" key="5">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
             </TabPane>
 
-            <TabPane tab="僵尸网络" key="6">
-                <Table pagination={{ pageSize: 50 }} dataSource={this.mapToObjectList(botnet_map)} columns={columns} />
+            <TabPane tab="蜜罐" key="6">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(honeypot_map)} columns={columns} />
             </TabPane>
 
-            <TabPane tab="弱口令" key="7">
+            <TabPane tab="僵尸网络" key="7">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.ipsMapToObjectList(botnet_map)} columns={columns} />
+            </TabPane>
+
+            <TabPane tab="弱口令" key="8">
+                <Table pagination={{ pageSize: 50 }} dataSource={this.itemMapToObjectList(weak_map)} columns={columns_weak} />
             </TabPane>
             </Tabs>
             </div>
