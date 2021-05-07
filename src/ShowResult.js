@@ -90,7 +90,7 @@ class ShowResult extends React.Component {
         let obj_list = [];
         map.forEach((value, key) => {
             value["ips"].forEach((item, index) => {
-                obj_list.push({"name": key, "index": index, "count": value["ips"].length, ...value, "ip": item})
+                obj_list.push({"name": key, "index": index, "count": value["ips"].length, ...value, "ip": item["ip"]})
             })
         })
 
@@ -427,10 +427,10 @@ class ShowResult extends React.Component {
             // ----------- 测试数据 -------------
             satabox_map.set("test1", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
                 "danger_level":"高危", "is_zero_vul":"是", "related_links":"http://www.o/#a.d?r1=1.9;r2=1", "patch_link":"http://www.openssh.com/", 
-                "ips":["1.1", "1.2"]})
+                "ips":[{"ip":"1.1"}, {"ip":"1.2"}]})
             satabox_map.set("test2", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
                 "danger_level":"高危", "is_zero_vul":"否", "related_links":"http://www.o/#a\r\nhttp://www.p/#b", "patch_link":"http://www.openssh.com/", 
-                "ips":["2.1"]})
+                "ips":[{"ip":"2.1"}]})
             */
         } else if(parseInt(this.state._ip_tabs_index) > 0) {
             const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐类型", "僵尸网络", "服务名"]

@@ -1,8 +1,8 @@
 import './App.css';
 
 const APP_CONFIG = {
-    DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
-    // DOMAIN_URL: "/cloud_nmap_api/",
+    // DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
+    DOMAIN_URL: "/cloud_nmap_api/",
 }
 
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
