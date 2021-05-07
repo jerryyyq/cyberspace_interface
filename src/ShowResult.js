@@ -5,7 +5,6 @@ import ResultFind from './ResultFind.js';
 import ReactJson from 'react-json-view'
 
 import './App.css';
-import { ControlOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
 
@@ -263,7 +262,7 @@ class ShowResult extends React.Component {
                 },
             },
             {
-                title: "是否 0 DAY",
+                title: "0 DAY",
                 dataIndex: 'is_zero_vul',
                 key: 'is_zero_vul',
                 render: (value, row, index) => {
@@ -286,7 +285,7 @@ class ShowResult extends React.Component {
                 key: 'vul_des',
                 render: (value, row, index) => {
                     const obj = {
-                      children: value,
+                      children: <pre>{value}</pre>,
                       props: {},
                     };
 
@@ -304,7 +303,7 @@ class ShowResult extends React.Component {
                 key: 'related_links',
                 render: (value, row, index) => {
                     const obj = {
-                      children: value,
+                      children: <pre>{value}</pre>,
                       props: {},
                     };
 
@@ -413,7 +412,6 @@ class ShowResult extends React.Component {
                 console.log("satabox_exploit = ", record["satabox_exploit"])
                 record["satabox_exploit"].forEach((item) => {
                     let statbox_value = {};
-                    let item_list = [];
                     if(satabox_map.has(item["vul_name"])) {
                         statbox_value = satabox_map.get(item["vul_name"])
                     } else {
@@ -424,6 +422,16 @@ class ShowResult extends React.Component {
                     satabox_map.set(item["vul_name"], statbox_value)
                 })
             })
+
+            /*
+            // ----------- 测试数据 -------------
+            satabox_map.set("test1", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
+                "danger_level":"高危", "is_zero_vul":"是", "related_links":"http://www.o/#a.d?r1=1.9;r2=1", "patch_link":"http://www.openssh.com/", 
+                "ips":["1.1", "1.2"]})
+            satabox_map.set("test2", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
+                "danger_level":"高危", "is_zero_vul":"否", "related_links":"http://www.o/#a\r\nhttp://www.p/#b", "patch_link":"http://www.openssh.com/", 
+                "ips":["2.1"]})
+            */
         } else if(parseInt(this.state._ip_tabs_index) > 0) {
             const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐类型", "僵尸网络", "服务名"]
             columns = [
@@ -535,8 +543,9 @@ class ShowResult extends React.Component {
                     weak_map.set(item["service"], item_list)
                 })
 
-                weak_map.set("test1", [{"ip":"1", "port":21, "username":"wo", "password":"p1"},{"ip":"2", "port":21, "username":"wo", "password":"p2"}])
-                weak_map.set("test2", [{"ip":"3", "port":23, "username":"wo", "password":"p3"}])
+                // ----------- 测试数据 -------------
+                // weak_map.set("test1", [{"ip":"1", "port":21, "username":"wo", "password":"p1"},{"ip":"2", "port":21, "username":"wo", "password":"p2"}])
+                // weak_map.set("test2", [{"ip":"3", "port":23, "username":"wo", "password":"p3"}])
             })
 
             /*

@@ -11,7 +11,7 @@ function JsonDetail(title, data) {
 
     return (
         <Popover content={SHOW_CONTENT} title={title}>
-            <a>{title}</a>
+            <a href="">{title}</a>
         </Popover>
     );
 }

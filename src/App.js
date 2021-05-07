@@ -13,7 +13,7 @@ import './App.css';
 
 moment.locale('zh-cn');
 
-const { Header, Footer, Sider } = Layout;
+const { Footer, Sider } = Layout;
 
 class App extends React.Component {
     state = {

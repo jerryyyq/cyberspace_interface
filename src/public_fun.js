@@ -13,7 +13,7 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
 
     if(typeof data === "object") {
         console.log("yyq_fetch, data is FormData")
-        let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
+        // let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
         opt_head = {}
     } else {
         let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';

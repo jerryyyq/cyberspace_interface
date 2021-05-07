@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Space, Input, Button, Upload } from 'antd';
+import { Collapse, Space, Input, Button } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import ReactJson from 'react-json-view'
 import { UpOutlined } from '@ant-design/icons';
@@ -60,7 +60,7 @@ class WeakPasswordAdd extends React.Component {
 
     onJsonEdit = (e) => {
         console.log("json edit callback", e)
-        if (e.new_value == "error") {
+        if (e.new_value === "error") {
             return false
         }
 
@@ -69,7 +69,7 @@ class WeakPasswordAdd extends React.Component {
 
     onJsonAdd = (e) => {
         console.log("json add callback", e)
-        if (e.new_value == "error") {
+        if (e.new_value === "error") {
             return false
         }
 

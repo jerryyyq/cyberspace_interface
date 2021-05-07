@@ -37,7 +37,6 @@ class TaskAdd extends React.Component {
 
     get_default_strategy = memoize(
         (strategy_list, strategy) => {
-            let strategy_value = this.state.strategy
             if(strategy === "") {
                 if(strategy_list.length > 0) {
                     return strategy_list[0].name
@@ -212,9 +211,9 @@ class TaskAdd extends React.Component {
                     template_list: data.template_list
                 })
 
-                Array.from(data.template_list, (e, i) => {
-                    // console.log("e = ", e)
-                    this.fetchOnePortTemplateInfo(e)
+                data.template_list.forEach(template_name => {
+                    // console.log("template_name = ", template_name)
+                    this.fetchOnePortTemplateInfo(template_name)
                 })
             }, 
             (err_msg) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Collapse, Space, Input, Button, Upload, Checkbox } from 'antd';
-import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
+import { APP_CONFIG, RED_STAR, yyq_fetch } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
 import './App.css';

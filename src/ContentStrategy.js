@@ -30,7 +30,7 @@ class ContentStrategy extends React.Component {
                     weak_password_list: data.weak_password_list
                 })
 
-                Array.from(data.weak_password_list, (item, i) => {
+                data.weak_password_list.forEach(item => {
                     console.log("item = ", item)
                     this.fetchOneWeakPasswordInfo(item.name)
                 })
@@ -84,7 +84,7 @@ class ContentStrategy extends React.Component {
         } else {
             this.setState({weak_password_list: ls_value})
 
-            Array.from(ls_value, (item, i) => {
+            ls_value.forEach(item => {
                 ls_value = get_local_stroage_value(KEY_NAME_WEAK_PASSWORD + item.name)
                 if(ls_value === null) {
                     this.fetchOneWeakPasswordInfo(item.name)

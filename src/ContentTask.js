@@ -65,7 +65,7 @@ class ContentTask extends React.Component {
 
         yyq_fetch(url, 'GET', 
             (data) => {
-                let index = this.state.task_list.findIndex(item => item.task_id == task_id)
+                let index = this.state.task_list.findIndex(item => item.task_id === task_id)
                 if(-1 < index) {
                     this.state.task_list[index].poc_name_list = data.poc_name_list
                 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Input, Button, InputNumber, Row, Col, Table } from 'antd';
+import { Collapse, Input, Button, Row, Col, Table } from 'antd';
 import { RED_STAR, string_is_empty } from './public_fun.js';
 import { UpOutlined } from '@ant-design/icons';
 import ReactJson from 'react-json-view'
@@ -7,7 +7,6 @@ import ReactJson from 'react-json-view'
 import './App.css';
 
 const { Panel } = Collapse;
-const { TextArea } = Input;
 
 class ResultFind extends React.Component {
     constructor(props) {

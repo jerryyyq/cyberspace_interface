@@ -98,7 +98,7 @@ class ContentPoc extends React.Component {
               title: '是 POC集',
               dataIndex: 'is_set',
               key: 'is_set',
-              render: (text) => (text == 1 ? "是" : "否")
+              render: (text) => (parseInt(text) === 1 ? "是" : "否")
             },
             {
               title: '说明',
