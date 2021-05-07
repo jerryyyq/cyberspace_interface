@@ -425,7 +425,8 @@ class ShowResult extends React.Component {
 
             /*
             // ----------- 测试数据 -------------
-            satabox_map.set("test1", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
+            satabox_map.set("test1", {"vul_des":"OpenSSH是一种开放源码的SSH协议的实现。\r\n\r\nOpenSSH 'schnorr'函数存在远程拒绝服务漏洞，由于未能正确过滤用户提交的某些数据，允许远程攻击者利用漏洞提交特殊请求破坏内存，造成拒绝服务攻击。", 
+                "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
                 "danger_level":"高危", "is_zero_vul":"是", "related_links":"http://www.o/#a.d?r1=1.9;r2=1", "patch_link":"http://www.openssh.com/", 
                 "ips":[{"ip":"1.1"}, {"ip":"1.2"}]})
             satabox_map.set("test2", {"vul_des":"OpenSSH是一种协议\r\n\r\nOpenSSH", "cve_number":"CVE-2014-1692", "cnvd_number":"CNVD-2014-00916",
@@ -618,7 +619,7 @@ class ShowResult extends React.Component {
             </TabPane>
 
             <TabPane tab="系统漏洞" key="5">
-                <Table pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
+                <Table scroll={{x: '100%'}} pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
             </TabPane>
 
             <TabPane tab="蜜罐" key="6">
