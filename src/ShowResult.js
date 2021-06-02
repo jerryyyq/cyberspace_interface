@@ -580,7 +580,7 @@ class ShowResult extends React.Component {
             <ResultFind result_list={this.state.result_list} />
 
             <Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeTabs}>
-            <TabPane tab={<span style={{fontSize:18}}>总览</span>} key="0">
+            <TabPane tab={<span style={{fontSize:18}}>原始数据</span>} key="0">
                 <Table pagination={{ pageSize: 50 }} dataSource={this.state.result_list} columns={columns} />
             </TabPane>
 
