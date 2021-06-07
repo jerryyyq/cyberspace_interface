@@ -433,7 +433,7 @@ class ShowResult extends React.Component {
                 "ips":[{"ip":"2.1"}]})
             */
         } else if(parseInt(this.state._ip_tabs_index) > 0) {
-            const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐类型", "僵尸网络", "服务名"]
+            const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐名称", "僵尸网络", "服务名"]
             columns = [
                 {
                     title: TYPE_TITLE[parseInt(this.state._ip_tabs_index)],
