@@ -8,6 +8,8 @@ import ContentRemote from './ContentRemote.js'
 import ContentFinger from './ContentFinger.js'
 import ContentStrategy from './ContentStrategy.js'
 import ContentPoc from './ContentPoc.js'
+import ContentLogon from './ContentLogon.js'
+import ContentPassword from './ContentPassword.js'
 
 import './App.css';
 
@@ -17,15 +19,37 @@ const { Footer, Sider } = Layout;
 
 class App extends React.Component {
     state = {
+        logon: 0,
+        user_name: "",
         cur_item: 0
     };
+
+    handleLogon = (logon, user_name) => {
+        this.setState({logon: logon, user_name: user_name});
+    }
 
     handleClick = event => {
         this.setState({cur_item: event.key});
     }
 
     render() {
-        const CONTENT_ITEMS = [ContentTask, ContentNode, ContentRemote, ContentFinger, ContentStrategy, ContentPoc];
+        // 未登录
+        if(0 === this.state.logon) {
+            return (
+                <Layout>
+                    <Layout>
+                        <PageHeader avatar={{src:'logo.svg'}} title="网络空间测绘系统" />
+                    </Layout>
+
+                    <ContentLogon onLogon={this.handleLogon} />
+                    
+                    <Footer style={{ textAlign: 'center' }}>恒安嘉新（北京）科技股份公司 版权所有 © 2008-2021</Footer>
+                </Layout>
+            )
+        }
+
+        // 已经登录成功：
+        const CONTENT_ITEMS = [ContentTask, ContentNode, ContentRemote, ContentFinger, ContentStrategy, ContentPoc, ContentPassword];
         let CUR_CONTENT = CONTENT_ITEMS[this.state.cur_item]
 
         return (
@@ -45,10 +69,11 @@ class App extends React.Component {
                             <Menu.Item key="3">指纹管理</Menu.Item>
                             <Menu.Item key="4">弱口令管理</Menu.Item>
                             <Menu.Item key="5">POC管理</Menu.Item>
+                            <Menu.Item key="6">修改口令</Menu.Item>
                         </Menu>
                     </Sider>
 
-                    <CUR_CONTENT />
+                    <CUR_CONTENT user={this.state.user_name}/>
                 </Layout>
 
                 <Footer>恒安嘉新（北京）科技股份公司 版权所有 © 2008-2021</Footer>
