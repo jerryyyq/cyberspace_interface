@@ -128,7 +128,7 @@ class TaskAdd extends React.Component {
         const formData = new FormData();
 
         if(string_is_empty(this.state.task_name)){
-            alert("任务名称不能为空！");
+            alert("任务名称不能为空！task_name = " + this.state.task_name);
             return;
         }
         formData.append("task_name", this.state.task_name);
@@ -194,7 +194,8 @@ class TaskAdd extends React.Component {
         console.log("fetch_data = ", fetch_data)
 
         yyq_fetch(url, 'POST', data => {
-                alert("提交成功！任务 ID 是：" + data.task_id + "\n创建需要时间，请稍后刷新列表获取任务信息。\n请不要重复提交。")
+                alert("提交成功！任务 ID 是：" + data.task_id + "\n创建需要时间，请稍后刷新列表获取最终任务信息。")
+                this.props.onChange(data.task_id)
                 this.setState({_active_key: ""})
             }, (err_msg) => {
                 alert("提交失败: " + err_msg);
