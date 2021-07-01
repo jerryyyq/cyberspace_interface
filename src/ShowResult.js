@@ -618,7 +618,7 @@ class ShowResult extends React.Component {
             </TabPane>
 
             <TabPane tab="系统漏洞" key="5">
-                <Table pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
+                <Table scroll={{x:800}} pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
             </TabPane>
 
             <TabPane tab="蜜罐" key="6">
