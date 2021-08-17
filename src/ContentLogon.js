@@ -45,7 +45,7 @@ class ContentLogon extends React.Component {
 
         console.log("window.location = ", window.location, ", location.hostname = ", window.location.hostname)
         let url = window.location.href + "user/logon/"
-        // let url = "http://192.168.205.180:29080/user/logon"
+        // url = "http://192.168.205.180:29080/user/logon"
         console.log("url = ", url)
 
         yyq_fetch(url, 'POST', data => {

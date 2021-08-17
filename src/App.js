@@ -9,6 +9,7 @@ import ContentFinger from './ContentFinger.js'
 import ContentStrategy from './ContentStrategy.js'
 import ContentPoc from './ContentPoc.js'
 import ContentLogon from './ContentLogon.js'
+import ContentNodeStatistics from './ContentNodeStatistics.js'
 import ContentPassword from './ContentPassword.js'
 
 import './App.css';
@@ -49,7 +50,8 @@ class App extends React.Component {
         }
 
         // 已经登录成功：
-        const CONTENT_ITEMS = [ContentTask, ContentNode, ContentRemote, ContentFinger, ContentStrategy, ContentPoc, ContentPassword];
+        const CONTENT_ITEMS = [ContentTask, ContentRemote, ContentFinger, ContentStrategy, 
+                ContentPoc, ContentNode, ContentNodeStatistics, ContentPassword];
         let CUR_CONTENT = CONTENT_ITEMS[this.state.cur_item]
 
         return (
@@ -64,12 +66,13 @@ class App extends React.Component {
                     <Sider>
                         <Menu theme="dark" defaultSelectedKeys={['0']}  onClick={this.handleClick} >
                             <Menu.Item key="0">任务管理</Menu.Item>
-                            <Menu.Item key="1">节点管理</Menu.Item>
                             <Menu.Item key="2">远程安装</Menu.Item>
                             <Menu.Item key="3">指纹管理</Menu.Item>
                             <Menu.Item key="4">弱口令管理</Menu.Item>
                             <Menu.Item key="5">POC管理</Menu.Item>
-                            <Menu.Item key="6">修改口令</Menu.Item>
+                            <Menu.Item key="1">节点管理</Menu.Item>
+                            <Menu.Item key="6">节点子任务</Menu.Item>
+                            <Menu.Item key="7">修改口令</Menu.Item>
                         </Menu>
                     </Sider>
 

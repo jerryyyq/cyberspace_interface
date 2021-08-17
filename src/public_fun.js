@@ -2,6 +2,7 @@ import './App.css';
 
 const APP_CONFIG = {
     // DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
+    // DOMAIN_URL: "http://192.168.205.180:29080/cloud_nmap_api/",
     DOMAIN_URL: "/cloud_nmap_api/",
 }
 
