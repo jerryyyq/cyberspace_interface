@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Button, Row, Col } from 'antd';
-import { yyq_fetch, RED_STAR, string_is_empty } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, RED_STAR, string_is_empty } from './public_fun.js';
 
 import './App.css';
 
@@ -43,12 +43,7 @@ class ContentLogon extends React.Component {
         }
         console.log("fetch_data = ", fetch_data)
 
-        console.log("window.location = ", window.location, ", location.hostname = ", window.location.hostname)
-        let url = window.location.href + "user/logon/"
-        // url = "http://192.168.205.180:29080/user/logon"
-        console.log("url = ", url)
-
-        yyq_fetch(url, 'POST', data => {
+        yyq_fetch(APP_CONFIG.LOGON_URL, 'POST', data => {
                 this.props.onLogon(1, this.state.user_name)
             }, (err_msg) => {
                 alert("登录失败: " + err_msg);

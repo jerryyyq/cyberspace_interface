@@ -149,16 +149,21 @@ class ContentNodeStatistics extends React.Component {
                                 return <Option value={e["node_id"]} key={e["node_id"]}>{e["node_id"]}</Option>
                             })}
                         </Select></Col>
+                        <Col span={1} />
                     </Row><p/>
 
                     <Row gutter={[16, 124]}>
                         <Col span={1} />
-                        <Col span={22}><span className="tag_width">任务 ID：</span><Input value={this.state.task_id} className="keep_tag" onChange={this.onChangeTaskID} /></Col>
+                        <Col span={22}><span className="tag_width">任务 ID：</span>
+                            <Input value={this.state.task_id} className="keep_tag" onChange={this.onChangeTaskID} />
+                        </Col>
+                        <Col span={1} />
                     </Row><p/>
 
-                    <Row gutter={[16, 124]}>
-                        <Col span={21} />
-                        <Col span={1}><Button type="primary" onClick={this.onFind}>查找</Button></Col>
+                    <Row gutter={[16, 124]} className="column_right" >
+                        <Col span={1} />
+                        <Col span={22}><Button type="primary" onClick={this.onFind}>查找</Button></Col>
+                        <Col span={1} />
                     </Row><p/>
 
                     <Card title="节点子任务统计列表">

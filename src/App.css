@@ -51,3 +51,7 @@
 .keep_tag {
     width: calc(100% - 110px);
 }
+
+.column_right{
+  text-align: right !important;
+}

@@ -1,9 +1,21 @@
 import './App.css';
 
-const APP_CONFIG = {
-    // DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
-    // DOMAIN_URL: "http://192.168.205.180:29080/cloud_nmap_api/",
+const DEBUG = true
+
+var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
+var APP_CONFIG = {
     DOMAIN_URL: "/cloud_nmap_api/",
+    RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
+    LOGON_URL: window.location.href + "user/logon/", 
+}
+
+if(DEBUG) {
+    DOMAIN_HOST_NAME = "http://192.168.205.180"
+    APP_CONFIG = {
+        DOMAIN_URL: DOMAIN_HOST_NAME + ":29080/cloud_nmap_api/",
+        RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
+        LOGON_URL: DOMAIN_HOST_NAME + ":29080/user/logon/", 
+    }
 }
 
 const RED_STAR = (<span style={{color:"red"}}>*</span>)

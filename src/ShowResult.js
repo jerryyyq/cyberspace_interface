@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
-import { yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import ResultFind from './ResultFind.js';
 import ReactJson from 'react-json-view'
 
@@ -26,9 +26,7 @@ class ShowResult extends React.Component {
     }
 
     fetchAllScanResultList = () => {
-        console.log("window.location = ", window.location, ", location.hostname = ", window.location.hostname)
-        let RESULT_URL = window.location.protocol + "//" + window.location.hostname + ":29090/cloud_receive_api/scan_result/"
-        let url = RESULT_URL + this.props.task.task_id + "/"
+        let url = APP_CONFIG.RESULT_URL + this.props.task.task_id + "/"
         console.log("url = ", url)
 
         for(let i = 0; i < this.props.task.ip_group_count; i++) {

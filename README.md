@@ -30,7 +30,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### `npm run build`
 
-!!! Befor the build, must modify "public_fun.js" line 4 to: 'DOMAIN_URL: "/cloud_nmap_api/"' !!! 
+!!! Befor the build, must modify "public_fun.js" line 3 to: "const DEBUG = false" !!! 
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
