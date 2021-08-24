@@ -47,18 +47,14 @@ class ContentLogon extends React.Component {
                 this.props.onLogon(1, this.state.user_name)
             }, (err_msg) => {
                 alert("登录失败: " + err_msg);
-            }, JSON.stringify(fetch_data)
+            }, fetch_data
         )
     }
 
-    onkeydown = (e)=> {
-		if (e.keyCode === 13) {
+    onEnterKeyPress = (e) => {
+		if (e.which === 13) {
 			this.onSubmitForm()
 		}
-	}
-
-    componentDidUpdate(){
-		document.addEventListener('keydown', this.onkeydown);
 	}
 
     render() {
@@ -70,7 +66,10 @@ class ContentLogon extends React.Component {
             </Row>
             
             <Row type="flex" justify="center" align="middle">
-            <Col span={8}><span className="tag_width">{RED_STAR}密码：</span><Input.Password className="keep_tag" value={this.state.password} onChange={this.onChangePassword} /></Col>
+            <Col span={8}><span className="tag_width">{RED_STAR}密码：</span>
+                <Input.Password className="keep_tag" value={this.state.password} 
+                        onChange={this.onChangePassword} onKeyPress={this.onEnterKeyPress} />
+            </Col>
             </Row>
 
             <Row type="flex" justify="center" align="middle">

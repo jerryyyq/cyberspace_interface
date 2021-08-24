@@ -58,7 +58,7 @@ class ContentNode extends React.Component {
             (err_msg) => {
                 alert(err_msg)
             },
-            JSON.stringify({"node_id":node_id, "enable":enable})
+            {"node_id":node_id, "enable":enable}
         )
     }
 

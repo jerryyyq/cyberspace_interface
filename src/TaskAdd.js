@@ -181,7 +181,7 @@ class TaskAdd extends React.Component {
             let object = {};
             formData.forEach((value, key) => {object[key] = value});
             object["priority"] = parseInt(object["priority"])
-            fetch_data = JSON.stringify(object);
+            fetch_data = object;
         } else {
             /*
             const data = new URLSearchParams();

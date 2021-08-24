@@ -21,16 +21,27 @@ if(DEBUG) {
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
-    console.log("yyq_fetch, data type is: ", typeof data)
+    console.log("yyq_fetch, data type is: ", typeof data, " data = ", data)
     let opt_head = {}
+    let mode = 'cors'
 
-    if(typeof data === "object") {
-        console.log("yyq_fetch, data is FormData")
-        // let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
-        opt_head = {}
-    } else {
-        let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
-        opt_head = {'Content-Type':content_type}
+    if(data) {
+        if(typeof data === "object") {
+            if(data instanceof FormData) {
+                console.log("yyq_fetch, data is FormData")
+                // let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
+                opt_head = {}
+            }
+            else {
+                console.log("yyq_fetch, data is object will trans to json string")
+                let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
+                opt_head = {'Content-Type': content_type}
+                data = JSON.stringify(data)
+            }
+        } else if(typeof data === "string") {
+            opt_head = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
+            mode = 'no-cors'
+        }
     }
 
     // console.log("yyq_fetch, befor call fetch, url = ", url)
@@ -39,7 +50,7 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         method: method,
         headers: opt_head,
         body: data,
-        mode: 'cors',
+        mode: mode,
         redirect: 'follow',
         cache: 'default'
     })

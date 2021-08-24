@@ -47,31 +47,26 @@ class ContentFofaSearch extends React.Component {
             return;
         }
 
-        let url = APP_CONFIG.DOMAIN_URL + "node_task_statistics/" + this.state.node_id;
-        if(!string_is_empty(this.state.task_id)){
-            url = url + "/" + this.state.task_id
-        }
+        let url = APP_CONFIG.DOMAIN_URL + "data_search";
 
-        yyq_fetch(url, 'GET', 
+        yyq_fetch(url, 'POST', 
             (data) => {
                 this.setState({
-                    task_statistics_list: data["node_list"]
+                    search_data: data.result
                 })
             }, 
             (err_msg) => {
                 alert(err_msg)
-            }
+            },
+            this.state.search_str
         )
     }
 
-    onkeydown = (e)=> {
-		if (e.keyCode === 13) {
-			this.onSubmitForm()
+    onEnterKeyPress = (e)=> {
+        console.log("onkeydown, e = ", e)
+		if (e.which === 13) {
+			this.onFind()
 		}
-	}
-
-    componentDidUpdate() {
-		document.addEventListener('keydown', this.onFind);
 	}
 
     componentDidMount() {
@@ -153,7 +148,8 @@ class ContentFofaSearch extends React.Component {
                             <Row gutter={[16, 124]}>
                                 <Col span={1} />
                                 <Col span={19}><span className="tag_width">检索条件：</span>
-                                <Input value={this.state.search_str} className="keep_tag" prefix={<SearchOutlined />} onChange={this.onChangeSearchStr} />
+                                <Input value={this.state.search_str} className="keep_tag" prefix={<SearchOutlined />} 
+                                        onChange={this.onChangeSearchStr} onKeyPress={this.onEnterKeyPress}/>
                                 </Col>
                                 <Col><Button type="primary" onClick={this.onFind}>检索</Button></Col>
                                 <Col span={1} />

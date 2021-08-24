@@ -63,7 +63,7 @@ class ContentPassword extends React.Component {
                 alert("口令修改成功");
             }, (err_msg) => {
                 alert("口令修改失败: " + err_msg);
-            }, JSON.stringify(fetch_data)
+            }, fetch_data
         )
     }
 

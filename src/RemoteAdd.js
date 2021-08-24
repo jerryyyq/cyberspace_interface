@@ -154,7 +154,7 @@ class RemoteAdd extends React.Component {
                     this.props.onChange()
                 }, (err_msg) => {
                     alert("提交失败: " + err_msg);
-                }, JSON.stringify(fetch_data))
+                }, fetch_data)
         } else {
             fetch_data["id"] = parseInt(this.state.id)
             let url = APP_CONFIG.DOMAIN_URL + 'remote_machine/' + this.state.id
@@ -164,7 +164,7 @@ class RemoteAdd extends React.Component {
                 this.props.onChange()
             }, (err_msg) => {
                 alert("提交失败: " + err_msg);
-            }, JSON.stringify(fetch_data))
+            }, fetch_data)
         }
     }
 
