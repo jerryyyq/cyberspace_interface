@@ -2,11 +2,12 @@ import React from 'react';
 import { Layout, Table, Card, Row, Col, Input, Select, Button, Skeleton } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 
 import './App.css';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 class ContentFofaSearch extends React.Component {
     constructor(props) {
@@ -15,6 +16,9 @@ class ContentFofaSearch extends React.Component {
             cur_page: 0,
             err_msg: "",
             search_str: "",
+            field_name: "protocol",
+            operator: "==",
+            field_value: "",
             summary_data: {},
             search_data: []
         };
@@ -37,6 +41,41 @@ class ContentFofaSearch extends React.Component {
         )
     }
 
+    onChangeFieldName = (value) => {
+        this.setState({ field_name: value })
+    }
+    
+    onChangeOperator = (value) => {
+        this.setState({ operator: value })
+    }
+
+    onChangeFieldValue = (e) => {
+        this.setState({ field_value: e.target.value })
+    }
+
+    onAddSearchData = (e) => {
+        if(string_is_empty(this.state.field_name)){
+            alert("请先选择检索字段");
+            return;
+        }
+        if(string_is_empty(this.state.field_value)){
+            alert("请输入检索值");
+            return;
+        }
+
+        let add_search = this.state.field_name + this.state.operator + this.state.field_value
+        if(-1 < this.state.search_str.indexOf(add_search)) {
+            alert("不要重复添加");
+            return;
+        }
+
+        if(!string_is_empty(this.state.search_str)){
+            add_search = this.state.search_str + ',\n' + add_search
+        }
+
+        this.setState({ search_str: add_search})
+    }
+    
     onChangeSearchStr = (e) => {
         this.setState({ search_str: e.target.value })
     }
@@ -112,10 +151,13 @@ class ContentFofaSearch extends React.Component {
             );
         } else {
             // {"country":[{"count":1041,"country":"中国"},{"count":3,"country":"美国"},{"count":1,"country":"局域网"}]}
-            var summary_country = []
+            let summary_country = []
             if("country" in this.state.summary_data) {
                 summary_country = this.state.summary_data.country
             }
+
+            let field_name = ["protocol","app","title","server","header","cert_subject","port","ip","scan_time"]
+            let operator = ["==", "!=", "="]
 
             return (
                 <Layout.Content key="1">
@@ -147,11 +189,41 @@ class ContentFofaSearch extends React.Component {
                         <Col span={18}>
                             <Row gutter={[16, 124]}>
                                 <Col span={1} />
-                                <Col span={19}><span className="tag_width">检索条件：</span>
-                                <Input value={this.state.search_str} className="keep_tag" prefix={<SearchOutlined />} 
+                                <Col>
+                                    <span className="tag_width">检索字段：</span>
+                                    <Select style={{width:"120px"}} defaultValue={this.state.field_name} onChange={this.onChangeFieldName}>
+                                        {field_name.map((item, index) => {
+                                            return <Option value={item} key={item}>{item}</Option>
+                                        })}
+                                    </Select>
+                                </Col>
+                                <Col>
+                                    <Select defaultValue={this.state.operator} onChange={this.onChangeOperator}>
+                                        {operator.map((item, index) => {
+                                            return <Option value={item} key={item}>{item}</Option>
+                                        })}
+                                    </Select>
+                                </Col>
+                                <Col span={10}>
+                                    <Input value={this.state.field_value} onChange={this.onChangeFieldValue} />
+                                </Col>
+                                <Col span={1} >
+                                    <Button type="primary" shape="circle" icon={<PlusOutlined />} onClick={this.onAddSearchData} />
+                                </Col>
+                                <Col span={1} />
+                            </Row>
+                            <Row gutter={[16, 124]}><Col span={1} /><Col>检索条件：</Col></Row>
+                            <Row gutter={[16, 124]}>
+                                <Col span={1} />
+                                <Col span={22}>
+                                <TextArea rows={4} value={this.state.search_str} prefix={<SearchOutlined />} 
                                         onChange={this.onChangeSearchStr} onKeyPress={this.onEnterKeyPress}/>
                                 </Col>
-                                <Col><Button type="primary" onClick={this.onFind}>检索</Button></Col>
+                                <Col span={1} />
+                            </Row>
+                            <Row gutter={[16, 124]} className="column_right">
+                                <Col span={1} />
+                                <Col span={22}><Button type="primary" onClick={this.onFind}>检索</Button></Col>
                                 <Col span={1} />
                             </Row><p/>
 

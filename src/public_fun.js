@@ -23,7 +23,6 @@ const RED_STAR = (<span style={{color:"red"}}>*</span>)
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
     console.log("yyq_fetch, data type is: ", typeof data, " data = ", data)
     let opt_head = {}
-    let mode = 'cors'
 
     if(data) {
         if(typeof data === "object") {
@@ -40,7 +39,6 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
             }
         } else if(typeof data === "string") {
             opt_head = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
-            mode = 'no-cors'
         }
     }
 
@@ -50,7 +48,7 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         method: method,
         headers: opt_head,
         body: data,
-        mode: mode,
+        mode: 'cors',
         redirect: 'follow',
         cache: 'default'
     })
