@@ -113,34 +113,13 @@ class ContentFofaSearch extends React.Component {
     }
 
     render() {
-        const columns = [
-            {
-              title: '索引',
-              dataIndex: 'id',
-              key: 'id',
-              render: (text, record) => DataDetail(text, record),
-            },
-            {
-              title: '节点 ID',
-              dataIndex: 'node_id',
-              key: 'node_id',
-            },
-            {
-                title: '任务 ID',
-                dataIndex: 'task_id',
-                key: 'task_id',
-            },
-            {
-              title: '执行的子任务数',
-              dataIndex: 'sub_task_count',
-              key: 'sub_task_count',
-            },
-            {
-                title: '更新时间',
-                dataIndex: 'update_time',
-                key: 'update_time',
-            },
-        ];
+        let columns = []
+        if(this.state.search_data.length > 0) {
+            let item0 = this.state.search_data[0]
+            for(let key in item0) {
+                columns.push({title:key, dataIndex:key, key:key})
+            } 
+        }    
 
         if(this.state.err_msg !== "") {
             return (
@@ -232,13 +211,10 @@ class ContentFofaSearch extends React.Component {
                             </Card>
                         </Col>
                     </Row>
-
-
                     </div>
                 </Layout.Content>
             );
         }
-
     }
 }
 
