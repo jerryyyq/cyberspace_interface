@@ -1,6 +1,6 @@
 import './App.css';
 
-const DEBUG = true
+const DEBUG = false
 
 var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
 var APP_CONFIG = {
