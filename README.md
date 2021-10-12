@@ -5,10 +5,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 After you clone this project, you should run: "npm install" at the project's directiory befor run "npm start". 
 
-old npm registry is: https://registry.npmjs.org/
+old npm registry is: https://registry.npmjs.org/    
 set new registry: npm config set registry https://mirrors.huaweicloud.com/repository/npm/
 
-sudo npm install -g npm
+sudo npm install -g npm     
 sudo npm install
 
 ## Available Scripts
@@ -85,5 +85,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 
 ## my add component
-npm install --save react-json-view
+npm install --save react-json-view     
 npm install --save memoize-one
