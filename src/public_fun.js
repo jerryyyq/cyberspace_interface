@@ -1,23 +1,45 @@
 import './App.css';
 
-const APP_CONFIG = {
-    // DOMAIN_URL: "http://localhost:29080/cloud_nmap_api/",
+const DEBUG = false
+
+var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
+var APP_CONFIG = {
     DOMAIN_URL: "/cloud_nmap_api/",
+    RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
+    LOGON_URL: window.location.href + "user/logon/", 
+}
+
+if(DEBUG) {
+    DOMAIN_HOST_NAME = "http://192.168.205.180"
+    APP_CONFIG = {
+        DOMAIN_URL: DOMAIN_HOST_NAME + ":29080/cloud_nmap_api/",
+        RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
+        LOGON_URL: DOMAIN_HOST_NAME + ":29080/user/logon/", 
+    }
 }
 
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
-    console.log("yyq_fetch, data type is: ", typeof data)
+    console.log("yyq_fetch, data type is: ", typeof data, " data = ", data)
     let opt_head = {}
 
-    if(typeof data === "object") {
-        console.log("yyq_fetch, data is FormData")
-        // let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
-        opt_head = {}
-    } else {
-        let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
-        opt_head = {'Content-Type':content_type}
+    if(data) {
+        if(typeof data === "object") {
+            if(data instanceof FormData) {
+                console.log("yyq_fetch, data is FormData")
+                // let content_type = "" // "multipart/form-data; boundary=----WebKitFormBoundaryAnydWsQ1ajKuGoCd" // "application/x-www-form-urlencoded; charset=UTF-8"   // "multipart/form-data"
+                opt_head = {}
+            }
+            else {
+                console.log("yyq_fetch, data is object will trans to json string")
+                let content_type = (method.toLowerCase() === 'get') ? 'text/plain' : 'application/json';
+                opt_head = {'Content-Type': content_type}
+                data = JSON.stringify(data)
+            }
+        } else if(typeof data === "string") {
+            opt_head = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
+        }
     }
 
     // console.log("yyq_fetch, befor call fetch, url = ", url)

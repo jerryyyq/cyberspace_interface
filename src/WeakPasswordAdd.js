@@ -102,7 +102,7 @@ class WeakPasswordAdd extends React.Component {
             err_msg => {
                 alert("提交失败: " + err_msg);
             }, 
-            JSON.stringify(this.state.data)
+            this.state.data
         )
     }
 

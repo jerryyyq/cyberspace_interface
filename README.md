@@ -5,6 +5,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 After you clone this project, you should run: "npm install" at the project's directiory befor run "npm start". 
 
+old npm registry is: https://registry.npmjs.org/
+set new registry: npm config set registry https://mirrors.huaweicloud.com/repository/npm/
+
+sudo npm install -g npm
+sudo npm install
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -24,7 +30,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### `npm run build`
 
-!!! Befor the build, must modify "public_fun.js" line 4 to: 'DOMAIN_URL: "/cloud_nmap_api/"' !!! 
+!!! Befor the build, must modify "public_fun.js" line 3 to: "const DEBUG = false" !!! 
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.

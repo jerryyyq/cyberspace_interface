@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Table, Card, Tooltip, Space, PageHeader, Row, Col } from 'antd';
+import { Layout, Table, Card, Tooltip, Space, PageHeader, Row, Col, Alert } from 'antd';
 import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
@@ -14,6 +14,8 @@ const KEY_NAME_TASK_LIST = "_ls_task_list"
 const KEY_NAME_WEAK_PASSWORD_LIST = "_ls_weak_password_list"
 const KEY_NAME_POC_LIST = "_ls_poc_list"
 
+const MAX_GET_TIMES = 3;
+
 class ContentTask extends React.Component {
     constructor(props) {
         super(props);
@@ -23,8 +25,13 @@ class ContentTask extends React.Component {
             task_list: [],
             weak_password_list: [],
             poc_list: [],
-            show_result: null
+            show_result: null,
         };
+
+        this.timer = null;
+        this.get_ok = false;
+        this.new_task_id = "";
+        this.current_times = 0;
     }
 
     reloadAllList = () => {
@@ -56,6 +63,57 @@ class ContentTask extends React.Component {
                 this.setState({
                     err_msg: err_msg
                 })
+            }
+        )
+    }
+
+    getOneTaskInfo = (task_id) => {
+        this.new_task_id = task_id;
+        this.current_times = 0;
+        this.get_ok = false;
+
+        this.timer = setInterval(() => {
+            this.current_times ++;
+            console.log("in Interval, current_times = ", this.current_times)
+
+            this.fetchOneTaskInfo(this.new_task_id)
+
+            if(this.get_ok || this.current_times > MAX_GET_TIMES) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
+        }, 2000)
+    }
+
+    fetchOneTaskInfo = (task_id) => {
+        let url = APP_CONFIG.DOMAIN_URL + "scan_task/" + task_id;
+
+        yyq_fetch(url, 'GET', 
+            (data) => {
+                if(!this.get_ok) {
+                    this.get_ok = true
+
+                    var new_task_list = new Array();
+                    new_task_list = new_task_list.concat(this.state.task_list);
+
+                    new_task_list.unshift(data.task_info)
+                    console.log("new task_list = ", new_task_list)
+
+                    set_local_stroage_value(KEY_NAME_TASK_LIST, new_task_list)
+                    
+                    this.setState({
+                        task_list: new_task_list
+                    })
+
+                    if(data.task_info.scan_type === "4") {
+                        this.fetchOneTaskPocList(task_id)
+                    }
+                }
+            }, 
+            (err_msg) => {
+                if(this.current_times > MAX_GET_TIMES) {
+                    alert("获取新任务 " + task_id + " 的详细信息失败：" + err_msg);
+                }
             }
         )
     }
@@ -178,6 +236,10 @@ class ContentTask extends React.Component {
     }
   
     componentWillUnmount() {
+        if(this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
     }
 
     render() {
@@ -272,7 +334,7 @@ class ContentTask extends React.Component {
                 <Content>
                     <h2>任务管理</h2>
                     <div className="Content">
-                    <TaskAdd refresh_list={this.fetchAllTaskList} strategy={this.state.weak_password_list} poc={poc_set} /><br />
+                    <TaskAdd onChange={this.getOneTaskInfo} strategy={this.state.weak_password_list} poc={poc_set} /><br />
 
                     <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.reloadAllList}/>}>
                     <Table dataSource={this.state.task_list} columns={columns} />

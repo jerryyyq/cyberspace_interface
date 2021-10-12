@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
-import { yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
+import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import ResultFind from './ResultFind.js';
 import ReactJson from 'react-json-view'
 
@@ -26,13 +26,11 @@ class ShowResult extends React.Component {
     }
 
     fetchAllScanResultList = () => {
-        console.log("window.location = ", window.location, ", location.hostname = ", window.location.hostname)
-        let RESULT_URL = window.location.protocol + "//" + window.location.hostname + ":29090/cloud_receive_api/scan_result/"
-        let url = RESULT_URL + this.props.task.task_id + "/"
-        console.log("url = ", url)
+        let RESULT_URL = APP_CONFIG.RESULT_URL + this.props.task.task_id + "/"
+        console.log("RESULT_URL = ", RESULT_URL)
 
         for(let i = 0; i < this.props.task.ip_group_count; i++) {
-            url = url + i
+            let url = RESULT_URL + i
             // console.log("fetchAllScanResultList, url = ", url)
 
             yyq_fetch(url, 'GET', 
@@ -434,7 +432,7 @@ class ShowResult extends React.Component {
                 "ips":[{"ip":"2.1"}]})
             */
         } else if(parseInt(this.state._ip_tabs_index) > 0) {
-            const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐类型", "僵尸网络", "服务名"]
+            const TYPE_TITLE = ["IP", "端口号", "机器类型", "操作系统", "漏洞名称", "漏洞名称", "蜜罐名称", "僵尸网络", "服务名"]
             columns = [
                 {
                     title: TYPE_TITLE[parseInt(this.state._ip_tabs_index)],
@@ -581,7 +579,7 @@ class ShowResult extends React.Component {
             <ResultFind result_list={this.state.result_list} />
 
             <Tabs defaultActiveKey={this.state._ip_tabs_index} onChange={this.onChangeTabs}>
-            <TabPane tab={<span style={{fontSize:18}}>总览</span>} key="0">
+            <TabPane tab={<span style={{fontSize:18}}>原始数据</span>} key="0">
                 <Table pagination={{ pageSize: 50 }} dataSource={this.state.result_list} columns={columns} />
             </TabPane>
 
@@ -619,7 +617,7 @@ class ShowResult extends React.Component {
             </TabPane>
 
             <TabPane tab="系统漏洞" key="5">
-                <Table scroll={{x: '100%'}} pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
+                <Table scroll={{x:800}} pagination={{ pageSize: 50 }} dataSource={this.sataboxMapToObjectList(satabox_map)} columns={columns_satabox} />
             </TabPane>
 
             <TabPane tab="蜜罐" key="6">

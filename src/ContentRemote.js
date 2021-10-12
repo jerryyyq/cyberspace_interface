@@ -111,7 +111,7 @@ class ContentRemote extends React.Component {
             (err_msg) => {
                 alert("远程安装失败！err_msg = " + err_msg)
             },
-            JSON.stringify(fetch_data)
+            fetch_data
         )
     }
 
