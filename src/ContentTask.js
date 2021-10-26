@@ -4,7 +4,7 @@ import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value
 import DataDetail from './DataDetail.js';
 import TaskAdd from './TaskAdd.js';
 import ShowResult from './ShowResult.js';
-import { CloseCircleOutlined, ReloadOutlined, ProfileOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ReloadOutlined, ProfileOutlined, FileSyncOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -180,6 +180,21 @@ class ContentTask extends React.Component {
         )
     }
 
+    onDoDataMerage = (task_id, e) => {
+        console.log("onDoDataMerage, task_id = ", task_id, ", e = ", e)
+        let url = APP_CONFIG.DOMAIN_URL + "only_merge";
+
+        yyq_fetch(url, 'PUT', 
+            (data) => {
+                alert("提交成功！数据合并需要时间，不要重复下命令，请稍后刷新列表获取最终状态。")
+            }, 
+            (err_msg) => {
+                alert("执行数据合并失败！err_msg = " + err_msg)
+            }, 
+            {"cmd":"only_data_merge", "task_id":task_id}
+        )
+    }
+
     onDeleteTask = (task_id, e) => {
         console.log("onDeleteTask, task_id = ", task_id, ", e = ", e)
         let url = APP_CONFIG.DOMAIN_URL + "scan_task/" + task_id;
@@ -298,6 +313,16 @@ class ContentTask extends React.Component {
                             </a>
                             </Space>
                         )
+                    } else if (3 == record.task_state && 0 == record.data_state) {
+                        return (
+                            <Space>
+                            <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                            <a onClick={e => {this.onDoDataMerage(record, e)}}>
+                                <Tooltip title='合并数据'><FileSyncOutlined style={{ color: 'green' }} /></Tooltip>
+                            </a>
+                            </Space>
+                        )
+
                     } else {
                         return (
                             <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>

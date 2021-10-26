@@ -24,6 +24,17 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
     console.log("yyq_fetch, data type is: ", typeof data, " data = ", data)
     let opt_head = {}
     let mode = 'cors'
+    let reg = new RegExp( "://(.*?)/" );
+    let url_location = url.match(reg)
+    console.log("yyq_fetch, window.location.host = ", window.location.host, ", url location = ", url_location[1])
+    if(window.location.host === url_location[1]) {
+        mode = 'no-cors'
+    }
+
+    // if (method.toLowerCase() === 'get' || !data) {
+    //if ((method.toLowerCase() === 'get' || !data) && !DEBUG) {
+    //    mode = 'no-cors'
+    //}
 
     if(data) {
         if(typeof data === "object") {
@@ -41,10 +52,6 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         } else if(typeof data === "string") {
             opt_head = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
         }
-    }
-
-    if (method.toLowerCase() === 'get' || !data) {
-        mode = 'no-cors'
     }
 
     // console.log("yyq_fetch, befor call fetch, url = ", url)
@@ -70,8 +77,8 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         }
     })
     .catch(error => {
-        console.log("error = ", error);
-        on_error(String(error))
+        console.log("error = ", error, "data = ", data);
+        on_error(String(error) + ", response  = " + data)
     }) 
 }
 
