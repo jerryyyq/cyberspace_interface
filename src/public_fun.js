@@ -4,7 +4,7 @@ const DEBUG = false
 
 var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
 var APP_CONFIG = {
-    DOMAIN_URL: "/cloud_nmap_api/",
+    DOMAIN_URL: window.location.href + "cloud_nmap_api/",
     RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
     LOGON_URL: window.location.href + "user/logon/", 
 }
@@ -21,13 +21,14 @@ if(DEBUG) {
 const RED_STAR = (<span style={{color:"red"}}>*</span>)
 
 function yyq_fetch(url, method, on_ok, on_error, data=null) {
+    console.log("yyq_fetch, url is: ", url)
     console.log("yyq_fetch, data type is: ", typeof data, " data = ", data)
     let opt_head = {}
     let mode = 'cors'
     let reg = new RegExp( "://(.*?)/" );
     let url_location = url.match(reg)
     console.log("yyq_fetch, window.location.host = ", window.location.host, ", url location = ", url_location[1])
-    if(window.location.host === url_location[1]) {
+    if(window.location.host === url_location[1] && method.toLowerCase() === 'get') {
         mode = 'no-cors'
     }
 
@@ -54,7 +55,8 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         }
     }
 
-    // console.log("yyq_fetch, befor call fetch, url = ", url)
+    console.log("yyq_fetch, befor call fetch, url = ", url, 
+        ", mode = ", mode, ", opt_head = ", opt_head)
 
     fetch(url, {
         method: method,
@@ -68,17 +70,17 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         console.log("res = ", res); 
         return res.json()
     })
-    .then(data => {
-        console.log("data = ", data);
-        if(0 !== data.err) {
-            on_error(data.err_msg)
+    .then(res_json => {
+        console.log("res_json = ", res_json);
+        if(0 !== res_json.err) {
+            on_error(res_json.err_msg)
         } else {
-            on_ok(data)
+            on_ok(res_json)
         }
     })
     .catch(error => {
-        console.log("error = ", error, "data = ", data);
-        on_error(String(error) + ", response  = " + data)
+        console.log("error = ", error);
+        on_error(String(error))
     }) 
 }
 
