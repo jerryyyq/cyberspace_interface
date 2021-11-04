@@ -139,14 +139,13 @@ class ContentFofaSearch extends React.Component {
             let operator = ["==", "!=", "="]
 
             return (
-                <Layout.Content key="1">
+                <Layout.Content key="1" >
                     <h2>数据检索</h2>
                     <div className="Content">
                     <Row>
                         <Col span={6}>
-                            <Skeleton loading={1 > Object.keys(this.state.summary_data).length} active />
-
                             <Card title="地区" bordered={true}>
+                                <Skeleton loading={1 > Object.keys(this.state.summary_data).length} active />
                                 {Array.from(summary_country, (e, i) => {
                                     return <Row><Col span={12}> {e["country"]}: </Col><Col span={12}>{e["count"]} 个</Col></Row>
                                 })}
