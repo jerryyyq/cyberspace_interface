@@ -1,6 +1,6 @@
 import './App.css';
 
-const DEBUG = false
+const DEBUG = true
 
 var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
 var APP_CONFIG = {
@@ -32,7 +32,7 @@ function yyq_fetch(url, method, on_ok, on_error, data=null) {
         mode = 'no-cors'
     }
 
-    // if (method.toLowerCase() === 'get' || !data) {
+    //if (method.toLowerCase() === 'get') {
     //if ((method.toLowerCase() === 'get' || !data) && !DEBUG) {
     //    mode = 'no-cors'
     //}
