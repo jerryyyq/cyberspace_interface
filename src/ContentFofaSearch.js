@@ -166,6 +166,7 @@ class ContentFofaSearch extends React.Component {
 
         console.log("scene.getSize() = ", scene.getSize())
         console.log("scene.getContainer() = ", scene.getContainer())
+        this.worldLayer.fillLayer.fitBounds()
       
         this.scene = scene;        
     }

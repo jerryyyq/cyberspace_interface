@@ -31,6 +31,11 @@ class App extends React.Component {
     }
 
     handleClick = event => {
+        if(parseInt(event.key) === 7) {
+            window.open(window.location.href + "search");
+            return
+        }
+
         this.setState({cur_item: event.key});
     }
 
