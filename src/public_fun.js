@@ -1,6 +1,6 @@
 import './App.css';
 
-const DEBUG = true
+const DEBUG = false
 
 var DOMAIN_HOST_NAME = window.location.protocol + "//" + window.location.hostname
 var APP_CONFIG = {
@@ -10,7 +10,7 @@ var APP_CONFIG = {
 }
 
 if(DEBUG) {
-    DOMAIN_HOST_NAME = "http://121.37.70.6"    // "http://192.168.205.180"
+    DOMAIN_HOST_NAME = "http://192.168.205.180"    // "http://192.168.205.180"
     APP_CONFIG = {
         DOMAIN_URL: DOMAIN_HOST_NAME + ":29080/cloud_nmap_api/",
         RESULT_URL: DOMAIN_HOST_NAME + ":29090/cloud_receive_api/scan_result/",
