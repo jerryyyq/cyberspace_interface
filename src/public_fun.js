@@ -88,7 +88,7 @@ function string_is_empty(str) {
     if(typeof str === "undefined" || str === null || str === "")
         return true;
 
-    if (str.replace(/(^s*)|(s*$)/g, "").length === 0)
+    if (str.replace(/(^\s*)|(\s*$)/g, "").length === 0)
         return true;
 
     return false;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Table, Card, Tooltip } from 'antd';
 import { APP_CONFIG, yyq_fetch, get_local_stroage_value, set_local_stroage_value } from './public_fun.js';
 import DataDetail from './DataDetail.js';
-import { CloseCircleOutlined, CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { StopOutlined, CheckCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './App.css';
 
@@ -62,6 +62,28 @@ class ContentNode extends React.Component {
         )
     }
 
+    onDeleteNode = (node_id) => {
+        console.log("onDeleteNode, node_id = ", node_id)
+        let url = APP_CONFIG.DOMAIN_URL + "node/" + node_id;
+
+        yyq_fetch(url, 'DELETE', 
+            (data) => {
+                let new_node_list = this.state.node_list.filter(function(item) {
+                    return item["node_id"] !== node_id;
+                })
+
+                this.setState({
+                    node_list: new_node_list
+                })
+
+                set_local_stroage_value(KEY_NAME_NODE_LIST, new_node_list)
+            }, 
+            (err_msg) => {
+                alert("删除失败！err_msg = " + err_msg)
+            }
+        )
+    }
+
     componentDidMount() {
         let ls_value = get_local_stroage_value(KEY_NAME_NODE_LIST)
         if(ls_value === null) {
@@ -103,29 +125,9 @@ class ContentNode extends React.Component {
                 key: 'task_id',
             },
             {
-                title: '任务名称',
-                dataIndex: 'task_name',
-                key: 'task_name',
-            },
-            {
-                title: 'IP 分组索引',
-                dataIndex: 'ip_group_id',
-                key: 'ip_group_id',
-            },
-            {
-                title: '子任务序号',
-                dataIndex: 'sub_task_id',
-                key: 'sub_task_id',
-            },
-            {
                 title: '已离线',
                 dataIndex: 'is_died',
                 key: 'is_died',
-            },
-            {
-                title: '创建时间',
-                dataIndex: 'create_time',
-                key: 'create_time',
             },
             {
                 title: '最后心跳',
@@ -136,8 +138,26 @@ class ContentNode extends React.Component {
                 title: '操作',
                 key: 'action',
                 render: (text, record) => {
-                    if (record.enable) return (<a onClick={e => {this.onEnableNode(record.node_id, 0)}}><Tooltip title='禁用'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>)
-                    else return (<a onClick={e => {this.onEnableNode(record.node_id, 1)}}><Tooltip title='启用'><CheckCircleOutlined style={{ color: 'green' }} /></Tooltip></a>)   
+                    if (record.enable) return (
+                        <div>
+                        <a onClick={e => {this.onEnableNode(record.node_id, 0)}}>
+                        <Tooltip title='禁用'><StopOutlined style={{ color: 'hotpink' }} /></Tooltip>
+                        </a>
+                        <a onClick={e => {this.onDeleteNode(record.node_id)}}>
+                        <Tooltip title='删除'><CloseOutlined style={{ color: 'red' }} /></Tooltip>
+                        </a>
+                        </div>
+                    )
+                    else return (
+                        <div>
+                        <a onClick={e => {this.onEnableNode(record.node_id, 1)}}>
+                        <Tooltip title='启用'><CheckCircleOutlined style={{ color: 'green' }} /></Tooltip>
+                        </a>
+                        <a onClick={e => {this.onDeleteNode(record.node_id)}}>
+                        <Tooltip title='删除'><CloseOutlined style={{ color: 'red' }} /></Tooltip>
+                        </a>
+                        </div>
+                    )   
                 }
             },
         ];
