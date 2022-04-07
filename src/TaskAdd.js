@@ -294,6 +294,8 @@ class TaskAdd extends React.Component {
                     <Option value="5" key="5">密罐探测</Option>
                     <Option value="6" key="6">工控探测</Option>
                     <Option value="7" key="7">僵网探测</Option>
+                    <Option value="8" key="8">直接扫描</Option>
+                    <Option value="9" key="9">域名探测</Option>
                 </Select></Col>
             </Row><p/>
 
