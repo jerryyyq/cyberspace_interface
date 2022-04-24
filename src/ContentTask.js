@@ -180,8 +180,8 @@ class ContentTask extends React.Component {
         )
     }
 
-    onDoDataMerage = (task_id, e) => {
-        console.log("onDoDataMerage, task_id = ", task_id, ", e = ", e)
+    onDoDataMerage = (task_info, e) => {
+        console.log("onDoDataMerage, task_info = ", task_info, ", e = ", e)
         let url = APP_CONFIG.DOMAIN_URL + "only_merge";
 
         yyq_fetch(url, 'PUT', 
@@ -191,7 +191,7 @@ class ContentTask extends React.Component {
             (err_msg) => {
                 alert("执行数据合并失败！err_msg = " + err_msg)
             }, 
-            {"cmd":"only_data_merge", "task_id":task_id}
+            {"cmd":"only_data_merge", "task_id":task_info.task_id, "data_state":task_info.data_state}
         )
     }
 
