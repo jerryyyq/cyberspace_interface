@@ -308,12 +308,15 @@ class ContentTask extends React.Component {
                         return (
                             <Space>
                             <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
+                            <a onClick={e => {this.onDoDataMerage(record, e)}}>
+                                <Tooltip title='合并数据'><FileSyncOutlined style={{ color: 'green' }} /></Tooltip>
+                            </a>
                             <a onClick={e => {this.onShowResult(record, e)}}>
                                 <Tooltip title='查看结果'><ProfileOutlined style={{ color: 'green' }} /></Tooltip>
                             </a>
                             </Space>
                         )
-                    } else if (3 == record.task_state && 0 == record.data_state) {
+                    } else if (3 == record.task_state) {
                         return (
                             <Space>
                             <a onClick={e => {this.onDeleteTask(record.task_id, e)}}><Tooltip title='删除'><CloseCircleOutlined style={{ color: 'hotpink' }} /></Tooltip></a>
