@@ -86,7 +86,8 @@ class App extends React.Component {
                     <CUR_CONTENT user={this.state.user_name}/>
                 </Layout>
 
-                <Footer>恒安嘉新（北京）科技股份公司 版权所有 © 2008-2021</Footer>
+                <Footer>网络空间探测 版权所有 © 2020-2022</Footer>
+                {/*<Footer>恒安嘉新（北京）科技股份公司 版权所有 © 2008-2021</Footer>*/}
             </Layout>
 
             </div>
