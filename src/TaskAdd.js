@@ -1,6 +1,6 @@
 import React from 'react';
 import memoize from "memoize-one";
-import { Collapse, Radio, Input, Select, Tabs, Button, Upload, Row, Col } from 'antd';
+import { Collapse, Radio, Input, Select, Tabs, Button, Checkbox, Upload, Row, Col } from 'antd';
 import { APP_CONFIG, RED_STAR, yyq_fetch, string_is_empty } from './public_fun.js';
 import { UpOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -20,6 +20,8 @@ class TaskAdd extends React.Component {
             task_name: "",
             priority: 1,
             scan_type: "2",
+            is_tiny_task: false,
+            node_tag: "",
             strategy: "",
             poc_name_list: ["all"],
             template: "top10",
@@ -64,6 +66,14 @@ class TaskAdd extends React.Component {
 
     onChangeScanType = (value) => {
         this.setState({ scan_type: value })
+    }
+
+    onChangeTinyTask = (e) => {
+        this.setState({ is_tiny_task: e.target.checked })
+    }
+
+    onChangeNodeTag = (e) => {
+        this.setState({ node_tag: e.target.value })
     }
 
     onChangeStrategy = (e) => {
@@ -134,6 +144,14 @@ class TaskAdd extends React.Component {
         formData.append("task_name", this.state.task_name);
         formData.append("priority", parseInt(this.state.priority));
         formData.append("scan_type", this.state.scan_type);
+
+        if(this.state.is_tiny_task){        
+            formData.append("is_tiny_task", 1);
+        }
+
+        if(!string_is_empty(this.state.node_tag)) {
+            formData.append("node_tag", this.state.node_tag);
+        }
 
         if(this.state._ip_tabs_index === "0"){
             if(string_is_empty(this.state.ip_list)){
@@ -297,6 +315,11 @@ class TaskAdd extends React.Component {
                     <Option value="8" key="8">直接扫描</Option>
                     <Option value="9" key="9">域名探测</Option>
                 </Select></Col>
+            </Row><p/>
+
+            <Row gutter={[16, 24]}>
+                <Col span={4}>小任务(不分片)：<Checkbox checked={this.state.is_tiny_task} onChange={this.onChangeTinyTask}></Checkbox></Col>
+                <Col span={20}>节点标签：<Input className="keep_tag" value={this.state.node_tag} onChange={this.onChangeNodeTag} /></Col>
             </Row><p/>
 
             { ATTACH_INPUT }
