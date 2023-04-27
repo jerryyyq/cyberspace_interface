@@ -13,6 +13,7 @@ const { Content } = Layout;
 const KEY_NAME_TASK_LIST = "_ls_task_list"
 const KEY_NAME_WEAK_PASSWORD_LIST = "_ls_weak_password_list"
 const KEY_NAME_POC_LIST = "_ls_poc_list"
+const KEY_NAME_NODE_TAG_LIST = "_ls_node_tag_list"
 
 const MAX_GET_TIMES = 3;
 
@@ -25,6 +26,7 @@ class ContentTask extends React.Component {
             task_list: [],
             weak_password_list: [],
             poc_list: [],
+            node_tag_list: [],
             show_result: null,
         };
 
@@ -40,6 +42,8 @@ class ContentTask extends React.Component {
         this.fetchAllPocList()
 
         this.fetchAllTaskList()
+
+        this.fetchAllNodeTagList()
     }
 
     fetchAllTaskList = () => {
@@ -180,6 +184,25 @@ class ContentTask extends React.Component {
         )
     }
 
+    fetchAllNodeTagList = () => {
+        let url = APP_CONFIG.DOMAIN_URL + "node_tag_list";
+
+        yyq_fetch(url, 'GET', 
+            (data) => {
+                this.setState({
+                    node_tag_list: data.node_tag_list
+                })
+
+                set_local_stroage_value(KEY_NAME_NODE_TAG_LIST, data.node_tag_list)
+            }, 
+            (err_msg) => {
+                this.setState({
+                    err_msg: err_msg
+                })
+            }
+        )
+    }
+
     onDoDataMerage = (task_info, e) => {
         console.log("onDoDataMerage, task_info = ", task_info, ", e = ", e)
         let url = APP_CONFIG.DOMAIN_URL + "only_merge";
@@ -240,6 +263,13 @@ class ContentTask extends React.Component {
             this.fetchAllPocList()
         } else {
             this.setState({poc_list: ls_value})
+        }
+    
+        ls_value = get_local_stroage_value(KEY_NAME_NODE_TAG_LIST)
+        if(ls_value === null) {
+            this.fetchAllNodeTagList()
+        } else {
+            this.setState({node_tag_list: ls_value})
         }
 
         ls_value = get_local_stroage_value(KEY_NAME_TASK_LIST)
@@ -362,7 +392,7 @@ class ContentTask extends React.Component {
                 <Content>
                     <h2>任务管理</h2>
                     <div className="Content">
-                    <TaskAdd onChange={this.getOneTaskInfo} strategy={this.state.weak_password_list} poc={poc_set} /><br />
+                    <TaskAdd onChange={this.getOneTaskInfo} strategy={this.state.weak_password_list} poc={poc_set} node_tag={this.state.node_tag_list} /><br />
 
                     <Card title="任务列表" extra={<ReloadOutlined style={{ color: 'blue' }} onClick={this.reloadAllList}/>}>
                     <Table dataSource={this.state.task_list} columns={columns} />
