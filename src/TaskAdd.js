@@ -13,7 +13,7 @@ const { TabPane } = Tabs;
 class TaskAdd extends React.Component {
     constructor(props) {
         super(props);
-        console.log("props.strategy = ", props.strategy, ", props.poc = ", props.poc)
+        console.log("props.strategy = ", props.strategy, ", props.poc = ", props.poc, ", props.node_tag = ", props.node_tag)
 
         this.state = {
             err_msg: "",
@@ -21,7 +21,7 @@ class TaskAdd extends React.Component {
             priority: 1,
             scan_type: "2",
             is_tiny_task: false,
-            node_tag: "",
+            node_tag_list: [],
             strategy: "",
             poc_name_list: ["all"],
             template: "top10",
@@ -72,8 +72,9 @@ class TaskAdd extends React.Component {
         this.setState({ is_tiny_task: e.target.checked })
     }
 
-    onChangeNodeTag = (e) => {
-        this.setState({ node_tag: e.target.value })
+    onChangeNodeTag = (value) => {
+        console.log("onChangeNodeTag value = ", value);
+        this.setState({ node_tag_list: value })
     }
 
     onChangeStrategy = (e) => {
@@ -149,8 +150,9 @@ class TaskAdd extends React.Component {
             formData.append("is_tiny_task", 1);
         }
 
-        if(!string_is_empty(this.state.node_tag)) {
-            formData.append("node_tag", this.state.node_tag);
+        if(0 < this.state.node_tag_list.length) {
+            console.log("this.state.node_tag_list = ", this.state.node_tag_list);
+            formData.append("node_tag", this.state.node_tag_list);
         }
 
         if(this.state._ip_tabs_index === "0"){
@@ -319,7 +321,12 @@ class TaskAdd extends React.Component {
 
             <Row gutter={[16, 24]}>
                 <Col span={4}>小任务(不分片)：<Checkbox checked={this.state.is_tiny_task} onChange={this.onChangeTinyTask}></Checkbox></Col>
-                <Col span={20}>节点标签：<Input className="keep_tag" value={this.state.node_tag} onChange={this.onChangeNodeTag} /></Col>
+                <Col span={20}>节点标签：<Select mode="multiple" allowClear className="keep_tag" value={this.state.node_tag_list} onChange={this.onChangeNodeTag}>
+                    {Array.from(this.props.node_tag, (e, i) => {
+                        return <Option key={e.node_tag}>{e.node_tag}</Option>
+                    })}
+                    </Select>
+                </Col>
             </Row><p/>
 
             { ATTACH_INPUT }
